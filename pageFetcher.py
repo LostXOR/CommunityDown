@@ -46,7 +46,7 @@ class Fetcher:
         headers = {"Content-Type": "application/json"}, data = json.dumps(self.__nextRequestData))
         responseJSON = response.json()
 
-        # First page
+        # First page of community posts
         if "contents" in responseJSON:
             tabs = responseJSON["contents"]["twoColumnBrowseResultsRenderer"]["tabs"][:-1]
             communityTab = [tab for tab in tabs if tab["tabRenderer"]["title"] == "Community"][0]
@@ -55,6 +55,11 @@ class Fetcher:
         # Subsequent pages
         elif "onResponseReceivedEndpoints" in responseJSON:
             communityPosts = responseJSON["onResponseReceivedEndpoints"][0]["appendContinuationItemsAction"]["continuationItems"]
+
+        # No community posts on channel
+        if "messageRenderer" in communityPosts[0]:
+            self.__lastPage = True
+            return []
 
         # Check if this is last page and return
         if "backstagePostThreadRenderer" in communityPosts[-1]:
