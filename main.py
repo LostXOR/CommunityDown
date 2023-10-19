@@ -1,15 +1,9 @@
 import pageFetcher
 
-channelID = "UCTkXRDQl0luXxVQrRQvWS6w"
-zyphID = "UCPXGFu34px86DdXwocV-bYA"
+channel = "UCTkXRDQl0luXxVQrRQvWS6w"
 
-fetcher = pageFetcher.Fetcher(channelID)
-a = fetcher.fetchPage()
-a = fetcher.fetchPage()
-a = fetcher.fetchPage()
-a = fetcher.fetchPage()
-a = fetcher.fetchPage()
-a = fetcher.fetchPage()
+fetcher = pageFetcher.Fetcher(channel)
+print(fetcher.validChannel())
 print(fetcher.fetchPage())
 print(fetcher.fetchPage())
 print(fetcher.fetchPage())
