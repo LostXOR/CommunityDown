@@ -2,18 +2,24 @@ import requests, json, re
 
 class Fetcher:
     def __init__(self, channel):
-        # Get channel ID and verify channel is valid
+        # Attributes
+        self.__channelExists = False
+        self.__channelID = None
+        self.__hasCommunity = False
+        self.__lastPage = True
+
+        # Get channel pages assuming channel is either an ID or a username
         response1 = requests.get("https://youtube.com/@" + channel)
         response2 = requests.get("https://youtube.com/channel/" + channel)
-        matches = self.__channelID = re.findall('(?<=\/channel\/).*?(?=")', response1.text + response2.text)
-        if len(matches) == 0:
-            self.__channelID = None
-            self.__lastPage = True
-            self.__validChannel = False
-        else:
-            self.__channelID = matches[0]
+        channelPages = response1.text + response2.text
+
+        # Check whether channel exists and has a Community tab
+        if "/channel/" in channelPages:
+            self.__channelExists = True
+            self.__channelID = re.findall('(?<=\/channel\/).*?(?=")', channelPages)[0]
+        if '"title":"Community"' in channelPages:
+            self.__hasCommunity = True
             self.__lastPage = False
-            self.__validChannel = True
 
         # Generate JSON data sent in POST to request community pages
         # params is a magic string that's used to get the community tab, no idea what it's for
@@ -22,8 +28,15 @@ class Fetcher:
             "browseId": self.__channelID, "params": "Egljb21tdW5pdHnyBgQKAkoA"
         }
 
-    def validChannel(self):
-        return self.__validChannel
+    # Functions to get attributes of Fetcher objects
+    def channelExists(self):
+        return self.__channelExists
+    def hasCommunity(self):
+        return self.__hasCommunity
+    def lastPage(self):
+        return self.__lastPage
+    def channelID(self):
+        return self.__channelID
 
     def fetchPage(self):
         if self.__lastPage:

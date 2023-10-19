@@ -1,9 +1,13 @@
 import pageFetcher
 
-channel = "UCTkXRDQl0luXxVQrRQvWS6w"
+channel = "UCSHozX8N-F7GygP9PIIYxLw"
 
 fetcher = pageFetcher.Fetcher(channel)
-print(fetcher.validChannel())
+print(fetcher.channelExists())
+print(fetcher.channelID())
+print(fetcher.hasCommunity())
+print(fetcher.lastPage())
+
 print(fetcher.fetchPage())
 print(fetcher.fetchPage())
 print(fetcher.fetchPage())
