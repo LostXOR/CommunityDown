@@ -1,13 +1,14 @@
-import pageFetcher
+import pageFetcher, parsePost
 
-channel = "UCSHozX8N-F7GygP9PIIYxLw"
+channel = "@dream"
 
 fetcher = pageFetcher.Fetcher(channel)
-print(fetcher.channelExists())
-print(fetcher.channelID())
-print(fetcher.hasCommunity())
-print(fetcher.lastPage())
+print(f"Channel exists: {fetcher.channelExists()}")
+print(f"Channnel ID: {fetcher.channelID()}")
+print(f"Channel has Community page: {fetcher.hasCommunity()}")
+print(f"Last page of Community page: {fetcher.lastPage()}")
 
-print(fetcher.fetchPage())
-print(fetcher.fetchPage())
-print(fetcher.fetchPage())
+while not fetcher.lastPage():
+    page = fetcher.fetchPage()
+    for post in page:
+        print(parsePost.parsePost(post))
