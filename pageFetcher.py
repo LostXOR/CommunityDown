@@ -8,16 +8,19 @@ class Fetcher:
         self.__hasCommunity = False
         self.__lastPage = True
 
-        # Get channel pages assuming channel is either an ID or a username
-        response1 = requests.get("https://youtube.com/@" + channel)
-        response2 = requests.get("https://youtube.com/channel/" + channel)
-        channelPages = response1.text + response2.text
+        # Attempt to get channel page
+        if channel.startswith("@"):
+            response = requests.get("https://youtube.com/" + channel)
+        elif "youtube.com" in channel:
+            response = requests.get(channel)
+        else:
+            response = requests.get("https://youtube.com/channel/" + channel)
 
         # Check whether channel exists and has a Community tab
-        if "/channel/" in channelPages:
+        if "/channel/" in response.text:
             self.__channelExists = True
-            self.__channelID = re.findall('(?<=\/channel\/).*?(?=")', channelPages)[0]
-        if '"title":"Community"' in channelPages:
+            self.__channelID = re.findall('(?<=\/channel\/).*?(?=")', response.text)[0]
+        if '"title":"Community"' in response.text:
             self.__hasCommunity = True
             self.__lastPage = False
 
