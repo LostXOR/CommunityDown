@@ -73,3 +73,31 @@ class Channel:
             contPost = posts.pop()
             contToken = contPost["continuationItemRenderer"]["continuationEndpoint"]["continuationCommand"]["token"]
             nextRequestData["continuation"] = contToken
+
+def parsePost(post):
+    # Get the data we really want
+    post = post["backstagePostThreadRenderer"]["post"]["backstagePostRenderer"]
+    output = {}
+    # Attributes of every post
+    output["postID"] = post["postId"]
+    output["authorDisplayName"] = post["authorText"]["runs"][0]["text"]
+    output["authorImage"] = "https:" + post["authorThumbnail"]["thumbnails"][-1]["url"]
+    output["authorID"] = post["authorEndpoint"]["browseEndpoint"]["browseId"]
+    likeCountText = post["actionButtons"]["commentActionButtonsRenderer"]["likeButton"]["toggleButtonRenderer"]["accessibilityData"]["accessibilityData"]["label"]
+    output["likeCount"] = int("".join([c for c in likeCountText if c.isdigit()]))
+    # Optional attributes
+    if "runs" in post["contentText"]:
+        output["contentText"] = post["contentText"]["runs"][0]["text"]
+    else:
+        output["contentText"] = ""
+    output["timeText"] = post["publishedTimeText"]["runs"][0]["text"]
+    if "voteCount" in post:
+        output["likeCountText"] = post["voteCount"]["simpleText"]
+    else:
+        output["likeCountText"] = "0"
+    if "text" in post["actionButtons"]["commentActionButtonsRenderer"]["replyButton"]["buttonRenderer"]:
+        output["commentCountText"] = post["actionButtons"]["commentActionButtonsRenderer"]["replyButton"]["buttonRenderer"]["text"]["simpleText"]
+    else:
+        output["commentCountText"] = "0"
+
+    return output

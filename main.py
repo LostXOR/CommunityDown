@@ -1,4 +1,4 @@
-import communitydown, parsePost
+import communitydown, json
 
 testChannel = "@CommunityDownTestChannel"
 
@@ -9,4 +9,4 @@ print(f"Channel has Community page: {channel.hasCommunity()}")
 
 posts = channel.fetchPosts()
 for post in posts:
-    print(parsePost.parsePost(post))
+    print(communitydown.parsePost(post))
