@@ -1,16 +1,12 @@
-import pageFetcher, parsePost
+import communitydown, parsePost
 
 testChannel = "@CommunityDownTestChannel"
-testChannelNoCommunity = "@CommunityDownTestNoCommunity"
-testChannelEmpty = "@CommunityDownTestEmpty"
 
-fetcher = pageFetcher.Fetcher(channel)
-print(f"Channel exists: {fetcher.channelExists()}")
-print(f"Channnel ID: {fetcher.channelID()}")
-print(f"Channel has Community page: {fetcher.hasCommunity()}")
-print(f"Last page of Community page: {fetcher.lastPage()}")
+channel = communitydown.Channel(testChannel)
+print(f"Channel exists: {channel.exists()}")
+print(f"Channnel ID: {channel.channelID()}")
+print(f"Channel has Community page: {channel.hasCommunity()}")
 
-while not fetcher.lastPage():
-    page = fetcher.fetchPage()
-    for post in page:
-        print(parsePost.parsePost(post))
+posts = channel.fetchPosts()
+for post in posts:
+    print(parsePost.parsePost(post))

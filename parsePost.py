@@ -1,5 +1,6 @@
 import json
 
+# Currently broken for most types of posts
 def parsePost(post):
     # Get the data we really want
     post = post["backstagePostThreadRenderer"]["post"]["backstagePostRenderer"]
