@@ -1,6 +1,8 @@
 import pageFetcher, parsePost
 
-channel = "@dream"
+testChannel = "@CommunityDownTestChannel"
+testChannelNoCommunity = "@CommunityDownTestNoCommunity"
+testChannelEmpty = "@CommunityDownTestEmpty"
 
 fetcher = pageFetcher.Fetcher(channel)
 print(f"Channel exists: {fetcher.channelExists()}")
