@@ -74,30 +74,41 @@ class Channel:
             contToken = contPost["continuationItemRenderer"]["continuationEndpoint"]["continuationCommand"]["token"]
             nextRequestData["continuation"] = contToken
 
+# Parse the raw post JSON returned by the API into a more friendly format by stripping non-essential data
+# This function contains a lot of long JSON paths but there's really no way around that
 def parsePost(post):
     # Get the data we really want
     post = post["backstagePostThreadRenderer"]["post"]["backstagePostRenderer"]
     output = {}
-    # Attributes of every post
-    output["postID"] = post["postId"]
-    output["authorDisplayName"] = post["authorText"]["runs"][0]["text"]
-    output["authorImage"] = "https:" + post["authorThumbnail"]["thumbnails"][-1]["url"]
-    output["authorID"] = post["authorEndpoint"]["browseEndpoint"]["browseId"]
-    likeCountText = post["actionButtons"]["commentActionButtonsRenderer"]["likeButton"]["toggleButtonRenderer"]["accessibilityData"]["accessibilityData"]["label"]
-    output["likeCount"] = int("".join([c for c in likeCountText if c.isdigit()]))
-    # Optional attributes
-    if "runs" in post["contentText"]:
-        output["contentText"] = post["contentText"]["runs"][0]["text"]
-    else:
-        output["contentText"] = ""
-    output["timeText"] = post["publishedTimeText"]["runs"][0]["text"]
-    if "voteCount" in post:
-        output["likeCountText"] = post["voteCount"]["simpleText"]
-    else:
-        output["likeCountText"] = "0"
+
+    # Author attributes
+    output["authorID"] = post["authorEndpoint"]["browseEndpoint"]["browseId"] # ID of post author
+    output["authorDisplayName"] = post["authorText"]["runs"][0]["text"] # Visible name of post author
+    output["authorImage"] = "https:" + post["authorThumbnail"]["thumbnails"][-1]["url"] # Profile picture of post author
+
+    # Post attributes
+    output["postID"] = post["postId"] # Post ID
+    likeCountString = post["actionButtons"]["commentActionButtonsRenderer"]["likeButton"]["toggleButtonRenderer"]["accessibilityData"]["accessibilityData"]["label"]
+    output["likeCount"] = int("".join([c for c in likeCountString if c.isdigit()])) # Like count as a number
+    output["likeCountText"] = post["voteCount"]["simpleText"] if "voteCount" in post else "0" # Like count in "pretty" text form
+    output["timeText"] = post["publishedTimeText"]["runs"][0]["text"] # Time post was created in "pretty" text form
+    # It seems the exact time the post was created is not returned by the API, so this is the best we have
+
+    # Post comment count in text form (if post has comments)
     if "text" in post["actionButtons"]["commentActionButtonsRenderer"]["replyButton"]["buttonRenderer"]:
         output["commentCountText"] = post["actionButtons"]["commentActionButtonsRenderer"]["replyButton"]["buttonRenderer"]["text"]["simpleText"]
     else:
         output["commentCountText"] = "0"
+
+    # Post has some sort of attachment
+    if "backstageAttachment" in post:
+        # Post image attachment(s)
+        if "backstageImageRenderer" in post["backstageAttachment"]:
+            output["images"] = [post["backstageAttachment"]["backstageImageRenderer"]["image"]["thumbnails"][-1]["url"]]
+        elif "postMultiImageRenderer" in post["backstageAttachment"]:
+            images = post["backstageAttachment"]["postMultiImageRenderer"]["images"]
+            output["images"] = [o["backstageImageRenderer"]["image"]["thumbnails"][-1]["url"] for o in images]
+        else:
+            output["images"] = []
 
     return output
