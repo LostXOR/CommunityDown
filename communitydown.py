@@ -129,7 +129,22 @@ def parsePost(post):
                 "type": "poll",
                 "votesText": attachment["pollRenderer"]["totalVotes"]["simpleText"],
                 "choices": [o["text"]["runs"][0]["text"] for o in attachment["pollRenderer"]["choices"]],
-                "images": [o["image"]["thumbnails"][-1]["url"] for o in attachment["pollRenderer"]["choices"]] if "image" in attachment["pollRenderer"]["choices"][0] else None
+                "imageURLs": [o["image"]["thumbnails"][-1]["url"] for o in attachment["pollRenderer"]["choices"]] if "image" in attachment["pollRenderer"]["choices"][0] else None
+            }
+        # Video
+        elif "videoRenderer" in attachment:
+            output["attachment"] = {
+                "type": "video",
+                "ID": attachment["videoRenderer"]["videoId"],
+                "thumbnailURL": attachment["videoRenderer"]["thumbnail"]["thumbnails"][-1]["url"],
+                "title": attachment["videoRenderer"]["title"]["runs"][0]["text"],
+                "descriptionSnippet": attachment["videoRenderer"]["descriptionSnippet"]["runs"][0]["text"],
+                "authorDisplayName": attachment["videoRenderer"]["longBylineText"]["runs"][0]["text"],
+                "authorID": attachment["videoRenderer"]["longBylineText"]["runs"][0]["navigationEndpoint"]["browseEndpoint"]["browseId"],
+                "timeText": attachment["videoRenderer"]["publishedTimeText"]["simpleText"],
+                "lengthText": attachment["videoRenderer"]["lengthText"]["simpleText"],
+                "viewCount": int("".join([c for c in attachment["videoRenderer"]["viewCountText"]["simpleText"] if c.isdigit()])),
+                "viewCountText": attachment["videoRenderer"]["shortViewCountText"]["simpleText"]
             }
 
     return output
