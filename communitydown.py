@@ -61,12 +61,11 @@ class Channel:
 
             # No community posts on channel (return empty)
             if "messageRenderer" in posts[0]:
-                posts = []
-                return posts
+                return []
 
             # Last page (return what we have)
             if "backstagePostThreadRenderer" in posts[-1]:
-                return posts
+                return posts.reverse()
 
             # Pop last "post" (a dummy post) from list (if we haven't hit the end) and extract the continuation token
             # Continuation token is a magic string we need to send the API to get the next page
