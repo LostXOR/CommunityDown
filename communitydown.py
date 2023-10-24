@@ -146,5 +146,14 @@ def parsePost(post):
                 "viewCount": int("".join([c for c in attachment["videoRenderer"]["viewCountText"]["simpleText"] if c.isdigit()])),
                 "viewCountText": attachment["videoRenderer"]["shortViewCountText"]["simpleText"]
             }
+        # Quiz
+        elif "quizRenderer" in attachment:
+            output["attachment"] = {
+                "type": "quiz",
+                "choices": [o["text"]["runs"][0]["text"] for o in attachment["quizRenderer"]["choices"]],
+                "correctChoice": [o["isCorrect"] for o in attachment["quizRenderer"]["choices"]].index(True),
+                "explanation": attachment["quizRenderer"]["choices"][0]["explanation"]["runs"][0]["text"],
+                "answerCountText": attachment["quizRenderer"]["totalVotes"]["simpleText"]
+            }
 
     return output
