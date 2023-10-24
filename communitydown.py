@@ -92,7 +92,7 @@ def parsePost(post):
         "commentCountText": "0",
         "timeText": post["publishedTimeText"]["runs"][0]["text"],
         # Post contents
-        "contentText": "",
+        "contentText": None,
         # Attachment
         "attachment": None
     }
