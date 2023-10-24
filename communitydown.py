@@ -128,7 +128,8 @@ def parsePost(post):
             output["attachment"] = {
                 "type": "poll",
                 "votesText": attachment["pollRenderer"]["totalVotes"]["simpleText"],
-                "choices": [o["text"]["runs"][0]["text"] for o in attachment["pollRenderer"]["choices"]]
+                "choices": [o["text"]["runs"][0]["text"] for o in attachment["pollRenderer"]["choices"]],
+                "images": [o["image"]["thumbnails"][-1]["url"] for o in attachment["pollRenderer"]["choices"]] if "image" in attachment["pollRenderer"]["choices"][0] else None
             }
 
     return output
