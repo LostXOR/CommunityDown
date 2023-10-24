@@ -112,7 +112,6 @@ class parsePost(unittest.TestCase):
         print(post["timeText"])
         self.assertTrue(post["timeText"].endswith("ago"))
 
-
     def testPoll(self):
         post = communitydown.parsePost(testPosts[6])
         self.assertEqual(post["postID"], "UgkxQ2GoSAnhj3KbrWyvGVLLI16-oEcLJV2k")
@@ -145,10 +144,15 @@ class parsePost(unittest.TestCase):
 
     def testCommentCount(self):
         post = communitydown.parsePost(testPosts[12])
-        # TODO: Add tests for comment count
+        self.assertEqual(post["postID"], "UgkximjhpHrqqxHue2IDIpiDRDVK9Q3J8z4c")
+        self.assertEqual(post["contentText"], "Test Post With Many Comments")
+        self.assertEqual(post["commentCountText"], "8")
 
     def testVoteCount(self):
         post = communitydown.parsePost(testPosts[13])
-        # TODO: Add tests for vote count
+        self.assertEqual(post["postID"], "UgkxXrf-6FdrjY1oY5Og-2V8cm_Hmx1Zb8IS")
+        self.assertEqual(post["contentText"], "Test Post With Vote")
+        self.assertTrue(post["likeCount"] >= 1)
+        self.assertTrue(int(post["likeCountText"]) >= 1)
 
 unittest.main()
