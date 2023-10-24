@@ -83,17 +83,17 @@ def parsePost(post):
         # Author properties
         "authorID": post["authorEndpoint"]["browseEndpoint"]["browseId"],
         "authorDisplayName": post["authorText"]["runs"][0]["text"],
-        "authorImage": "https:" + post["authorThumbnail"]["thumbnails"][-1]["url"],
+        "authorImageURL": "https:" + post["authorThumbnail"]["thumbnails"][-1]["url"],
         # Post properties
         "postID": post["postId"],
         "likeCount": 0,
         "likeCountText": "0",
         "commentCountText": "0",
-        # It seems the exact time the post was created is not returned by the API, so this is the best we have
         "timeText": post["publishedTimeText"]["runs"][0]["text"],
         # Post contents
         "contentText": "",
-        "images": []
+        # Attachment
+        "attachment": None
     }
 
     # Like and comment counts
@@ -110,13 +110,25 @@ def parsePost(post):
 
     # Post has some sort of attachment
     if "backstageAttachment" in post:
-        # Single image attachment
-        if "backstageImageRenderer" in post["backstageAttachment"]:
-            output["images"] = [post["backstageAttachment"]["backstageImageRenderer"]["image"]["thumbnails"][-1]["url"]]
-        # Multiple image attachment
-        elif "postMultiImageRenderer" in post["backstageAttachment"]:
-            images = post["backstageAttachment"]["postMultiImageRenderer"]["images"]
-            output["images"] = [o["backstageImageRenderer"]["image"]["thumbnails"][-1]["url"] for o in images]
-
+        attachment = post["backstageAttachment"]
+        # Single image
+        if "backstageImageRenderer" in attachment:
+            output["attachment"] = {
+                "type": "image",
+                "url": attachment["backstageImageRenderer"]["image"]["thumbnails"][-1]["url"]
+            }
+        # Multiple images
+        elif "postMultiImageRenderer" in attachment:
+            output["attachment"] = {
+                "type": "multiImage",
+                "urls": [o["backstageImageRenderer"]["image"]["thumbnails"][-1]["url"] for o in attachment["postMultiImageRenderer"]["images"]]
+            }
+        # Poll
+        elif "pollRenderer" in attachment:
+            output["attachment"] = {
+                "type": "poll",
+                "votesText": attachment["pollRenderer"]["totalVotes"]["simpleText"],
+                "choices": [o["text"]["runs"][0]["text"] for o in attachment["pollRenderer"]["choices"]]
+            }
 
     return output
