@@ -102,7 +102,7 @@ class parsePost(unittest.TestCase):
         self.assertEqual(post["contentText"], None)
         self.assertEqual(post["attachment"]["type"], "multiImage")
         self.assertEqual(post["attachment"]["urls"][0], "https://yt3.ggpht.com/ucbXFS7xEjYaU3qke1Xo7wAx8X6BOJWAidq-zhLO9EjXv19e0lORwFlIbbn3dApzTAlCTtu5kG8pvA=s512-c-fcrop64=1,00000000ffffffff-nd-v1")
-        self.assertTrue(len(post["attachment"]["urls"]) == 5)
+        self.assertEqual(len(post["attachment"]["urls"]), 5)
 
     def testEditedPost(self):
         post = communitydown.parsePost(testPosts[5])
@@ -117,20 +117,35 @@ class parsePost(unittest.TestCase):
         self.assertEqual(post["postID"], "UgkxQ2GoSAnhj3KbrWyvGVLLI16-oEcLJV2k")
         self.assertEqual(post["contentText"], "Test Post Text Poll")
         self.assertEqual(post["attachment"]["type"], "poll")
-        self.assertTrue(post["attachment"]["votesText"].endswith("vote"))
+        self.assertTrue(post["attachment"]["votesText"].endswith("votes"))
         self.assertEqual(post["attachment"]["choices"], ["Choice One", "Choice Two", "Choice Three", "Choice Four"])
         self.assertEqual(post["attachment"]["imageURLs"], None)
 
     def testImagePoll(self):
         post = communitydown.parsePost(testPosts[9])
-        # TODO: Add tests for image poll
+        self.assertEqual(post["postID"], "UgkxWDZnrAVYI8w0jQOpRyC7XrJa9Ey_k1Wg")
+        self.assertEqual(post["contentText"], "Image Poll")
+        self.assertEqual(post["attachment"]["type"], "poll")
+        self.assertTrue(post["attachment"]["votesText"].endswith("votes"))
+        self.assertEqual(post["attachment"]["choices"], ["uwu", "owo"])
+        self.assertEqual(post["attachment"]["imageURLs"][0], "https://yt3.ggpht.com/mMRTwi6OYV7aSWl9o7Y44S87fUZiImACxeVncwLa2Pvl9DDiDyzM8aqNrVyftFcSqoF8_sP6PB5h=s512-c-fcrop64=1,00000000ffffffff-nd-v1")
+        self.assertEqual(len(post["attachment"]["imageURLs"]), 2)
 
+    # This should be changed to a video on the test channel at some point
     def testVideoEmbed(self):
         post = communitydown.parsePost(testPosts[8])
         self.assertEqual(post["postID"], "Ugkx0mOGgVuFfy8znxJWfIdryu6XL2iQHdOu")
         self.assertEqual(post["contentText"], "Video Post")
         self.assertEqual(post["attachment"]["type"], "video")
-        # TODO: Add asserts for video properties
+        self.assertEqual(post["attachment"]["ID"], "dQw4w9WgXcQ")
+        self.assertEqual(post["attachment"]["thumbnailURL"], "https://i.ytimg.com/vi/dQw4w9WgXcQ/hq720.jpg?sqp=-oaymwEXCNAFEJQDSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLDX3LgTmArIBIk6uvvz4y5p95MOcg")
+        self.assertEqual(post["attachment"]["title"], "Rick Astley - Never Gonna Give You Up (Official Music Video)")
+        self.assertTrue(post["attachment"]["descriptionSnippet"].startswith("The official video"))
+        self.assertEqual(post["attachment"]["authorDisplayName"], "Rick Astley")
+        self.assertTrue(post["attachment"]["timeText"].endswith("years ago"))
+        self.assertEqual(post["attachment"]["lengthText"], "3:33")
+        self.assertTrue(post["attachment"]["viewCount"] >= 1462235415) # View count as of writing this test
+        self.assertTrue(post["attachment"]["viewCountText"].endswith("views"))
 
     def testQuiz(self):
         post = communitydown.parsePost(testPosts[7])
