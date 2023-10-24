@@ -70,6 +70,7 @@ class parsePost(unittest.TestCase):
         self.assertTrue(post["likeCount"] >= 0)
         self.assertTrue(int(post["likeCountText"]) >= 0)
         self.assertEqual(post["commentCountText"], "0")
+        self.assertEqual(post["edited"], False)
         self.assertTrue(post["timeText"].endswith("ago"))
         self.assertEqual(post["contentText"], "Test Post Text Only")
         self.assertEqual(post["attachment"], None)
@@ -103,6 +104,15 @@ class parsePost(unittest.TestCase):
         self.assertEqual(post["attachment"]["urls"][0], "https://yt3.ggpht.com/ucbXFS7xEjYaU3qke1Xo7wAx8X6BOJWAidq-zhLO9EjXv19e0lORwFlIbbn3dApzTAlCTtu5kG8pvA=s512-c-fcrop64=1,00000000ffffffff-nd-v1")
         self.assertTrue(len(post["attachment"]["urls"]) == 5)
 
+    def testEditedPost(self):
+        post = communitydown.parsePost(testPosts[5])
+        self.assertEqual(post["postID"], "Ugkxh2DuCHmAmyjdAKVv_dcmrvMj787b2OL1")
+        self.assertEqual(post["contentText"], "Test Post Edit")
+        self.assertEqual(post["edited"], True)
+        print(post["timeText"])
+        self.assertTrue(post["timeText"].endswith("ago"))
+
+
     def testPoll(self):
         post = communitydown.parsePost(testPosts[6])
         self.assertEqual(post["postID"], "UgkxQ2GoSAnhj3KbrWyvGVLLI16-oEcLJV2k")
@@ -122,6 +132,7 @@ class parsePost(unittest.TestCase):
         self.assertEqual(post["contentText"], "Video Post")
         self.assertEqual(post["attachment"]["type"], "video")
         # TODO: Add asserts for video properties
+
     def testQuiz(self):
         post = communitydown.parsePost(testPosts[7])
         self.assertEqual(post["postID"], "Ugkxj5sWVNGmEZE73g2zxSea8k89GlceOA1d")

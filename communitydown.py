@@ -90,7 +90,8 @@ def parsePost(post):
         "likeCount": 0,
         "likeCountText": "0",
         "commentCountText": "0",
-        "timeText": post["publishedTimeText"]["runs"][0]["text"],
+        "timeText": post["publishedTimeText"]["runs"][0]["text"].removesuffix(" (edited)"),
+        "edited": post["publishedTimeText"]["runs"][0]["text"].endswith(" (edited)"),
         # Post contents
         "contentText": None,
         # Attachment
