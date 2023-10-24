@@ -52,7 +52,7 @@ class TestChannel(unittest.TestCase):
         self.assertEqual(channelInvalid.channelID(), None)
 
     def testFetchPosts(self):
-        self.assertTrue(len(channelNormal.fetchPosts()) == 14)
+        self.assertTrue(len(channelNormal.fetchPosts()) == 15)
         self.assertEqual(channelEmpty.fetchPosts(), [])
         self.assertEqual(channelNoCommunity.fetchPosts(), None)
         self.assertEqual(channelInvalid.fetchPosts(), None)
