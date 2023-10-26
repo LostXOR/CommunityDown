@@ -1,5 +1,5 @@
 import unittest
-import communitydown
+from channel import Channel
 
 # Various formats of channel name/ID to test channel resolving
 validChannelStrings = [
@@ -23,10 +23,10 @@ invalidChannelStrings = [
     "youtube.com/channel/UCSHoxB12-34567P9PIIYxLw"
 ]
 # Test channels with community posts, an empty community tab, no community tab, and invalid
-channelNormal = communitydown.Channel("@CommunityDownTestChannel")
-channelEmpty = communitydown.Channel("@CommunityDownTestEmpty")
-channelNoCommunity = communitydown.Channel("@CommunityDownTestNoCommunity")
-channelInvalid = communitydown.Channel("@invalid channel")
+channelNormal = Channel("@CommunityDownTestChannel")
+channelEmpty = Channel("@CommunityDownTestEmpty")
+channelNoCommunity = Channel("@CommunityDownTestNoCommunity")
+channelInvalid = Channel("@invalid channel")
 # Grab posts of a channel for testing parsePost
 testPosts = channelNormal.fetchPosts()
 
@@ -34,11 +34,11 @@ class TestChannel(unittest.TestCase):
 
     def testExists(self):
         for channelString in validChannelStrings:
-            channel = communitydown.Channel(channelString)
+            channel = Channel(channelString)
             self.assertTrue(channel.exists())
 
         for channelString in invalidChannelStrings:
-            channel = communitydown.Channel(channelString)
+            channel = Channel(channelString)
             self.assertFalse(channel.exists())
 
     def testHasCommunity(self):
@@ -62,112 +62,111 @@ class TestChannel(unittest.TestCase):
 class parsePost(unittest.TestCase):
 
     def testTextPost(self):
-        post = communitydown.parsePost(testPosts[0])
-        self.assertEqual(post["postID"], "UgkxN3xglfBx_R4q55qU_Z1Hzey5Ah9CyTpE")
-        self.assertEqual(post["authorID"], "UCSHozX8N-F7GygP9PIIYxLw")
-        self.assertEqual(post["authorDisplayName"], "CommunityDown Test Channel")
-        self.assertEqual(post["authorImageURL"], "https://yt3.googleusercontent.com/ytc/APkrFKZYhSYg1uorjLPobZEDG0QOajyyEyKkDmprqcLsLalZTKmtVx_xBxZe7faUD1B4=s76-c-k-c0x00ffffff-no-rj-mo")
-        self.assertTrue(post["likeCount"] >= 0)
-        self.assertTrue(int(post["likeCountText"]) >= 0)
-        self.assertEqual(post["commentCountText"], "0")
-        self.assertEqual(post["edited"], False)
-        self.assertTrue(post["timeText"].endswith("ago"))
-        self.assertEqual(post["contentText"], "Test Post Text Only")
-        self.assertEqual(post["attachment"], None)
+        post = testPosts[0]
+        self.assertEqual(post.postID, "UgkxN3xglfBx_R4q55qU_Z1Hzey5Ah9CyTpE")
+        self.assertEqual(post.authorID, "UCSHozX8N-F7GygP9PIIYxLw")
+        self.assertEqual(post.authorDisplayName, "CommunityDown Test Channel")
+        self.assertEqual(post.authorImageURL, "https://yt3.googleusercontent.com/ytc/APkrFKZYhSYg1uorjLPobZEDG0QOajyyEyKkDmprqcLsLalZTKmtVx_xBxZe7faUD1B4=s76-c-k-c0x00ffffff-no-rj-mo")
+        self.assertTrue(post.likeCount >= 0)
+        self.assertTrue(int(post.likeCountText) >= 0)
+        self.assertEqual(post.commentCountText, "0")
+        self.assertEqual(post.edited, False)
+        self.assertTrue(post.timeText.endswith("ago"))
+        self.assertEqual(post.contentText, "Test Post Text Only")
+        self.assertEqual(post.attachment, None)
 
     def testTextImagePost(self):
-        post = communitydown.parsePost(testPosts[1])
-        self.assertEqual(post["contentText"], "Test Post Text With Image")
-        self.assertEqual(post["attachment"]["type"], "image")
-        self.assertEqual(post["attachment"]["url"], "https://yt3.ggpht.com/LD3QXmo4_3ix3b2axlqfJeUQ1YvOZdeLCkIY646w9xCOj-IR3V2u00xrWTyOEzcv1Z0gBTND0hT8=s512-c-fcrop64=1,00000000ffffffff-nd-v1")
+        post = testPosts[1]
+        self.assertEqual(post.contentText, "Test Post Text With Image")
+        self.assertEqual(post.attachment["type"], "image")
+        self.assertEqual(post.attachment["url"], "https://yt3.ggpht.com/LD3QXmo4_3ix3b2axlqfJeUQ1YvOZdeLCkIY646w9xCOj-IR3V2u00xrWTyOEzcv1Z0gBTND0hT8=s512-c-fcrop64=1,00000000ffffffff-nd-v1")
 
     def testTextMultiImagePost(self):
-        post = communitydown.parsePost(testPosts[2])
-        self.assertEqual(post["postID"], "UgkxDE0-ktPPh_QNsqC9ZLZgzpbaazujegHF")
-        self.assertEqual(post["contentText"], "Test Post Text With Multiple Images")
-        self.assertEqual(post["attachment"]["type"], "multiImage")
-        self.assertEqual(post["attachment"]["urls"][0], "https://yt3.ggpht.com/G5KKGBwa36uhKNKZ3LqzsUJZ7Gi19Msp1E_1lEMk_HC6aY1_5dQoXSIi8HXohuwdsh2PufCnrgl6uQ=s512-c-fcrop64=1,00000000ffffffff-nd-v1")
-        self.assertTrue(len(post["attachment"]["urls"]) == 5)
+        post = testPosts[2]
+        self.assertEqual(post.postID, "UgkxDE0-ktPPh_QNsqC9ZLZgzpbaazujegHF")
+        self.assertEqual(post.contentText, "Test Post Text With Multiple Images")
+        self.assertEqual(post.attachment["type"], "multiImage")
+        self.assertEqual(post.attachment["urls"][0], "https://yt3.ggpht.com/G5KKGBwa36uhKNKZ3LqzsUJZ7Gi19Msp1E_1lEMk_HC6aY1_5dQoXSIi8HXohuwdsh2PufCnrgl6uQ=s512-c-fcrop64=1,00000000ffffffff-nd-v1")
+        self.assertTrue(len(post.attachment["urls"]) == 5)
 
     def testImagePost(self):
-        post = communitydown.parsePost(testPosts[3])
-        self.assertEqual(post["postID"], "UgkxE0R5C37qvZ8PC1rcg9WgJiz-XERxgw4V")
-        self.assertEqual(post["contentText"], None)
-        self.assertEqual(post["attachment"]["type"], "image")
-        self.assertEqual(post["attachment"]["url"], "https://yt3.ggpht.com/w3pdzdEXiiqa4UEdxcon2Jwt1nNHF6eM4Yu8KcvU21_vIkOTS8kGKJJQfwnu4Wy3EUpdGABFo4cR=s512-c-fcrop64=1,00000000ffffffff-nd-v1")
+        post = testPosts[3]
+        self.assertEqual(post.postID, "UgkxE0R5C37qvZ8PC1rcg9WgJiz-XERxgw4V")
+        self.assertEqual(post.contentText, None)
+        self.assertEqual(post.attachment["type"], "image")
+        self.assertEqual(post.attachment["url"], "https://yt3.ggpht.com/w3pdzdEXiiqa4UEdxcon2Jwt1nNHF6eM4Yu8KcvU21_vIkOTS8kGKJJQfwnu4Wy3EUpdGABFo4cR=s512-c-fcrop64=1,00000000ffffffff-nd-v1")
 
     def testMultiImagePost(self):
-        post = communitydown.parsePost(testPosts[4])
-        self.assertEqual(post["postID"], "UgkxY2O9N8cX9rMNMK50lOK6VXMvw05uyTCa")
-        self.assertEqual(post["contentText"], None)
-        self.assertEqual(post["attachment"]["type"], "multiImage")
-        self.assertEqual(post["attachment"]["urls"][0], "https://yt3.ggpht.com/ucbXFS7xEjYaU3qke1Xo7wAx8X6BOJWAidq-zhLO9EjXv19e0lORwFlIbbn3dApzTAlCTtu5kG8pvA=s512-c-fcrop64=1,00000000ffffffff-nd-v1")
-        self.assertEqual(len(post["attachment"]["urls"]), 5)
+        post = testPosts[4]
+        self.assertEqual(post.postID, "UgkxY2O9N8cX9rMNMK50lOK6VXMvw05uyTCa")
+        self.assertEqual(post.contentText, None)
+        self.assertEqual(post.attachment["type"], "multiImage")
+        self.assertEqual(post.attachment["urls"][0], "https://yt3.ggpht.com/ucbXFS7xEjYaU3qke1Xo7wAx8X6BOJWAidq-zhLO9EjXv19e0lORwFlIbbn3dApzTAlCTtu5kG8pvA=s512-c-fcrop64=1,00000000ffffffff-nd-v1")
+        self.assertEqual(len(post.attachment["urls"]), 5)
 
     def testEditedPost(self):
-        post = communitydown.parsePost(testPosts[5])
-        self.assertEqual(post["postID"], "Ugkxh2DuCHmAmyjdAKVv_dcmrvMj787b2OL1")
-        self.assertEqual(post["contentText"], "Test Post Edit")
-        self.assertEqual(post["edited"], True)
-        print(post["timeText"])
-        self.assertTrue(post["timeText"].endswith("ago"))
+        post = testPosts[5]
+        self.assertEqual(post.postID, "Ugkxh2DuCHmAmyjdAKVv_dcmrvMj787b2OL1")
+        self.assertEqual(post.contentText, "Test Post Edit")
+        self.assertEqual(post.edited, True)
+        self.assertTrue(post.timeText.endswith("ago"))
 
     def testPoll(self):
-        post = communitydown.parsePost(testPosts[6])
-        self.assertEqual(post["postID"], "UgkxQ2GoSAnhj3KbrWyvGVLLI16-oEcLJV2k")
-        self.assertEqual(post["contentText"], "Test Post Text Poll")
-        self.assertEqual(post["attachment"]["type"], "poll")
-        self.assertTrue(post["attachment"]["votesText"].endswith("votes"))
-        self.assertEqual(post["attachment"]["choices"], ["Choice One", "Choice Two", "Choice Three", "Choice Four"])
-        self.assertEqual(post["attachment"]["imageURLs"], None)
+        post = testPosts[6]
+        self.assertEqual(post.postID, "UgkxQ2GoSAnhj3KbrWyvGVLLI16-oEcLJV2k")
+        self.assertEqual(post.contentText, "Test Post Text Poll")
+        self.assertEqual(post.attachment["type"], "poll")
+        self.assertTrue(post.attachment["votesText"].endswith("votes"))
+        self.assertEqual(post.attachment["choices"], ["Choice One", "Choice Two", "Choice Three", "Choice Four"])
+        self.assertEqual(post.attachment["imageURLs"], None)
 
     def testImagePoll(self):
-        post = communitydown.parsePost(testPosts[9])
-        self.assertEqual(post["postID"], "UgkxWDZnrAVYI8w0jQOpRyC7XrJa9Ey_k1Wg")
-        self.assertEqual(post["contentText"], "Image Poll")
-        self.assertEqual(post["attachment"]["type"], "poll")
-        self.assertTrue(post["attachment"]["votesText"].endswith("votes"))
-        self.assertEqual(post["attachment"]["choices"], ["uwu", "owo"])
-        self.assertEqual(post["attachment"]["imageURLs"][0], "https://yt3.ggpht.com/mMRTwi6OYV7aSWl9o7Y44S87fUZiImACxeVncwLa2Pvl9DDiDyzM8aqNrVyftFcSqoF8_sP6PB5h=s512-c-fcrop64=1,00000000ffffffff-nd-v1")
-        self.assertEqual(len(post["attachment"]["imageURLs"]), 2)
+        post = testPosts[9]
+        self.assertEqual(post.postID, "UgkxWDZnrAVYI8w0jQOpRyC7XrJa9Ey_k1Wg")
+        self.assertEqual(post.contentText, "Image Poll")
+        self.assertEqual(post.attachment["type"], "poll")
+        self.assertTrue(post.attachment["votesText"].endswith("votes"))
+        self.assertEqual(post.attachment["choices"], ["uwu", "owo"])
+        self.assertEqual(post.attachment["imageURLs"][0], "https://yt3.ggpht.com/mMRTwi6OYV7aSWl9o7Y44S87fUZiImACxeVncwLa2Pvl9DDiDyzM8aqNrVyftFcSqoF8_sP6PB5h=s512-c-fcrop64=1,00000000ffffffff-nd-v1")
+        self.assertEqual(len(post.attachment["imageURLs"]), 2)
 
     # This should be changed to a video on the test channel at some point
     def testVideoEmbed(self):
-        post = communitydown.parsePost(testPosts[8])
-        self.assertEqual(post["postID"], "Ugkx0mOGgVuFfy8znxJWfIdryu6XL2iQHdOu")
-        self.assertEqual(post["contentText"], "Video Post")
-        self.assertEqual(post["attachment"]["type"], "video")
-        self.assertEqual(post["attachment"]["ID"], "dQw4w9WgXcQ")
-        self.assertEqual(post["attachment"]["thumbnailURL"], "https://i.ytimg.com/vi/dQw4w9WgXcQ/hq720.jpg?sqp=-oaymwEXCNAFEJQDSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLDX3LgTmArIBIk6uvvz4y5p95MOcg")
-        self.assertEqual(post["attachment"]["title"], "Rick Astley - Never Gonna Give You Up (Official Music Video)")
-        self.assertTrue(post["attachment"]["descriptionSnippet"].startswith("The official video"))
-        self.assertEqual(post["attachment"]["authorDisplayName"], "Rick Astley")
-        self.assertTrue(post["attachment"]["timeText"].endswith("years ago"))
-        self.assertEqual(post["attachment"]["lengthText"], "3:33")
-        self.assertTrue(post["attachment"]["viewCount"] >= 1462235415) # View count as of writing this test
-        self.assertTrue(post["attachment"]["viewCountText"].endswith("views"))
+        post = testPosts[8]
+        self.assertEqual(post.postID, "Ugkx0mOGgVuFfy8znxJWfIdryu6XL2iQHdOu")
+        self.assertEqual(post.contentText, "Video Post")
+        self.assertEqual(post.attachment["type"], "video")
+        self.assertEqual(post.attachment["ID"], "dQw4w9WgXcQ")
+        self.assertEqual(post.attachment["thumbnailURL"], "https://i.ytimg.com/vi/dQw4w9WgXcQ/hq720.jpg?sqp=-oaymwEXCNAFEJQDSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLDX3LgTmArIBIk6uvvz4y5p95MOcg")
+        self.assertEqual(post.attachment["title"], "Rick Astley - Never Gonna Give You Up (Official Music Video)")
+        self.assertTrue(post.attachment["descriptionSnippet"].startswith("The official video"))
+        self.assertEqual(post.attachment["authorDisplayName"], "Rick Astley")
+        self.assertTrue(post.attachment["timeText"].endswith("years ago"))
+        self.assertEqual(post.attachment["lengthText"], "3:33")
+        self.assertTrue(post.attachment["viewCount"] >= 1462235415) # View count as of writing this test
+        self.assertTrue(post.attachment["viewCountText"].endswith("views"))
 
     def testQuiz(self):
-        post = communitydown.parsePost(testPosts[7])
-        self.assertEqual(post["postID"], "Ugkxj5sWVNGmEZE73g2zxSea8k89GlceOA1d")
-        self.assertEqual(post["contentText"], "Test Post Quiz")
-        self.assertEqual(post["attachment"]["type"], "quiz")
-        self.assertEqual(post["attachment"]["choices"], ["Answer 1", "Answer 2", "Answer 3 (Correct)"])
-        self.assertEqual(post["attachment"]["correctChoice"], 2)
-        self.assertEqual(post["attachment"]["explanation"], "Explanation For Correct Answer")
-        self.assertTrue(post["attachment"]["answerCountText"].endswith("answered"))
+        post = testPosts[7]
+        self.assertEqual(post.postID, "Ugkxj5sWVNGmEZE73g2zxSea8k89GlceOA1d")
+        self.assertEqual(post.contentText, "Test Post Quiz")
+        self.assertEqual(post.attachment["type"], "quiz")
+        self.assertEqual(post.attachment["choices"], ["Answer 1", "Answer 2", "Answer 3 (Correct)"])
+        self.assertEqual(post.attachment["correctChoice"], 2)
+        self.assertEqual(post.attachment["explanation"], "Explanation For Correct Answer")
+        self.assertTrue(post.attachment["answerCountText"].endswith("answered"))
 
     def testCommentCount(self):
-        post = communitydown.parsePost(testPosts[12])
-        self.assertEqual(post["postID"], "UgkximjhpHrqqxHue2IDIpiDRDVK9Q3J8z4c")
-        self.assertEqual(post["contentText"], "Test Post With Many Comments")
-        self.assertEqual(post["commentCountText"], "8")
+        post = testPosts[12]
+        self.assertEqual(post.postID, "UgkximjhpHrqqxHue2IDIpiDRDVK9Q3J8z4c")
+        self.assertEqual(post.contentText, "Test Post With Many Comments")
+        self.assertEqual(post.commentCountText, "8")
 
     def testVoteCount(self):
-        post = communitydown.parsePost(testPosts[13])
-        self.assertEqual(post["postID"], "UgkxXrf-6FdrjY1oY5Og-2V8cm_Hmx1Zb8IS")
-        self.assertEqual(post["contentText"], "Test Post With Vote")
-        self.assertTrue(post["likeCount"] >= 1)
-        self.assertTrue(int(post["likeCountText"]) >= 1)
+        post = testPosts[13]
+        self.assertEqual(post.postID, "UgkxXrf-6FdrjY1oY5Og-2V8cm_Hmx1Zb8IS")
+        self.assertEqual(post.contentText, "Test Post With Vote")
+        self.assertTrue(post.likeCount >= 1)
+        self.assertTrue(int(post.likeCountText) >= 1)
 
 unittest.main()

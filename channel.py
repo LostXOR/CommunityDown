@@ -1,4 +1,5 @@
 import requests, re, json
+from post import Post
 
 class Channel:
     def __init__(self, channel):
@@ -67,7 +68,8 @@ class Channel:
             if "backstagePostThreadRenderer" in posts[-1]:
                 # Reverse so posts are in chronological order
                 posts.reverse()
-                return posts
+                # Convert to Post objects and return
+                return [Post(data) for data in posts]
 
             # Pop last "post" (a dummy post) from list (if we haven't hit the end) and extract the continuation token
             # Continuation token is a magic string we need to send the API to get the next page
