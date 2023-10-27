@@ -11,7 +11,6 @@ def parseComment(comment):
         # Comment properties
         "commentID": comment["commentId"],
         "likeCount": 0,
-        "likeCountText": "0",
         "replyCount": 0,
         "timeText": comment["publishedTimeText"]["runs"][0]["text"].removesuffix(" (edited)"),
         "edited": comment["publishedTimeText"]["runs"][0]["text"].endswith(" (edited)"),
@@ -21,10 +20,7 @@ def parseComment(comment):
     # Like and reply counts
     likeCountString = comment["actionButtons"]["commentActionButtonsRenderer"]["likeButton"]["toggleButtonRenderer"]["accessibilityData"]["accessibilityData"]["label"]
     output["likeCount"] = int("".join([c for c in likeCountString if c.isdigit()]))
-    if "voteCount" in comment:
-        output["likeCountText"] = comment["voteCount"]["simpleText"]
     if "replyCount" in comment:
             output["replyCount"] = comment["replyCount"]
 
-    print(output)
     return output

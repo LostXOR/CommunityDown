@@ -11,7 +11,6 @@ def parsePost(post):
         # Post properties
         "postID": post["postId"],
         "likeCount": 0,
-        "likeCountText": "0",
         "commentCountText": "0",
         "timeText": post["publishedTimeText"]["runs"][0]["text"].removesuffix(" (edited)"),
         "edited": post["publishedTimeText"]["runs"][0]["text"].endswith(" (edited)"),
@@ -24,8 +23,6 @@ def parsePost(post):
     # Like and comment counts
     likeCountString = post["actionButtons"]["commentActionButtonsRenderer"]["likeButton"]["toggleButtonRenderer"]["accessibilityData"]["accessibilityData"]["label"]
     output["likeCount"] = int("".join([c for c in likeCountString if c.isdigit()]))
-    if "voteCount" in post:
-        output["likeCountText"] = post["voteCount"]["simpleText"]
     if "text" in post["actionButtons"]["commentActionButtonsRenderer"]["replyButton"]["buttonRenderer"]:
         output["commentCountText"] = post["actionButtons"]["commentActionButtonsRenderer"]["replyButton"]["buttonRenderer"]["text"]["simpleText"]
 
