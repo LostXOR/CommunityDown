@@ -27,8 +27,13 @@ channelNormal = Channel("@CommunityDownTestChannel")
 channelEmpty = Channel("@CommunityDownTestEmpty")
 channelNoCommunity = Channel("@CommunityDownTestNoCommunity")
 channelInvalid = Channel("@invalid channel")
-# Grab posts of a channel for testing parsePost
+# Grab posts of a channel for testing parsePost (and by extension fetchPosts)
 testPosts = channelNormal.fetchPosts()
+# Grab comments of a channel for testing parseComment (and by extension fetchComment)
+noComments = testPosts[0].fetchComments()
+oneComment = testPosts[11].fetchComments()
+topComments = testPosts[12].fetchComments()
+chronoComments = testPosts[12].fetchComments(chronological = True)
 
 class TestChannel(unittest.TestCase):
 
@@ -68,9 +73,8 @@ class parsePost(unittest.TestCase):
         self.assertEqual(post.authorDisplayName, "CommunityDown Test Channel")
         self.assertEqual(post.authorImageURL, "https://yt3.googleusercontent.com/ytc/APkrFKZYhSYg1uorjLPobZEDG0QOajyyEyKkDmprqcLsLalZTKmtVx_xBxZe7faUD1B4=s76-c-k-c0x00ffffff-no-rj-mo")
         self.assertTrue(post.likeCount >= 0)
-        self.assertTrue(int(post.likeCountText) >= 0)
         self.assertEqual(post.commentCountText, "0")
-        self.assertEqual(post.edited, False)
+        self.assertFalse(post.edited)
         self.assertTrue(post.timeText.endswith("ago"))
         self.assertEqual(post.contentText, "Test Post Text Only")
         self.assertEqual(post.attachment, None)
@@ -108,7 +112,7 @@ class parsePost(unittest.TestCase):
         post = testPosts[5]
         self.assertEqual(post.postID, "Ugkxh2DuCHmAmyjdAKVv_dcmrvMj787b2OL1")
         self.assertEqual(post.contentText, "Test Post Edit")
-        self.assertEqual(post.edited, True)
+        self.assertTrue(post.edited)
         self.assertTrue(post.timeText.endswith("ago"))
 
     def testPoll(self):
@@ -160,13 +164,44 @@ class parsePost(unittest.TestCase):
         post = testPosts[12]
         self.assertEqual(post.postID, "UgkximjhpHrqqxHue2IDIpiDRDVK9Q3J8z4c")
         self.assertEqual(post.contentText, "Test Post With Many Comments")
-        self.assertEqual(post.commentCountText, "8")
+        self.assertEqual(post.commentCountText, "42")
 
     def testVoteCount(self):
         post = testPosts[13]
         self.assertEqual(post.postID, "UgkxXrf-6FdrjY1oY5Og-2V8cm_Hmx1Zb8IS")
         self.assertEqual(post.contentText, "Test Post With Vote")
         self.assertTrue(post.likeCount >= 1)
-        self.assertTrue(int(post.likeCountText) >= 1)
+
+class parseComment(unittest.TestCase):
+
+    def testNoComments(self):
+        self.assertEqual(noComments, [])
+
+    def testOneComment(self):
+        self.assertTrue(len(oneComment), 1)
+        self.assertEqual(oneComment[0].authorID, "UCSHozX8N-F7GygP9PIIYxLw")
+        self.assertEqual(oneComment[0].authorDisplayName, "@CommunityDownTest")
+        self.assertEqual(oneComment[0].authorImageURL, "https://yt3.ggpht.com/ytc/APkrFKZYhSYg1uorjLPobZEDG0QOajyyEyKkDmprqcLsLalZTKmtVx_xBxZe7faUD1B4=s176-c-k-c0x00ffffff-no-rj")
+        self.assertEqual(oneComment[0].commentID, "UgycOEolpmxD37kcJJN4AaABAg")
+        self.assertTrue(oneComment[0].likeCount >= 1)
+        self.assertEqual(oneComment[0].replyCount, 0)
+        self.assertTrue(oneComment[0].timeText.endswith("ago"))
+        self.assertFalse(oneComment[0].edited)
+        self.assertEqual(oneComment[0].contentText, "Hurdle Durdle")
+
+    def testManyComments(self):
+        self.assertEqual(len(topComments), 35)
+        self.assertEqual(len(chronoComments), 35)
+        self.assertEqual(chronoComments[0].commentID, "UgxmOxIaaaHFkH22tj94AaABAg")
+        self.assertEqual(chronoComments[0].contentText, "Hello")
+        self.assertEqual(chronoComments[0].replyCount, 3)
+
+        self.assertEqual(chronoComments[1].commentID, "UgzbF4D7-o3C9P2izEV4AaABAg")
+        self.assertEqual(chronoComments[1].contentText, "Test Test")
+
+        self.assertEqual(chronoComments[33].commentID, "UgwWsiDrEvru2rp9M8Z4AaABAg")
+        self.assertEqual(chronoComments[33].contentText, "youtube api = stupid and i hate (edited nvm I love youtube api (jk))")
+        self.assertEqual(chronoComments[33].replyCount, 4)
+        self.assertTrue(chronoComments[33].edited)
 
 unittest.main()
