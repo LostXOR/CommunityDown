@@ -7,7 +7,7 @@ def parseComment(comment):
         # Author properties
         "authorID": comment["authorEndpoint"]["browseEndpoint"]["browseId"],
         "authorDisplayName": comment["authorText"]["simpleText"],
-        "authorImageURL": "https:" + comment["authorThumbnail"]["thumbnails"][-1]["url"],
+        "authorImageURL": comment["authorThumbnail"]["thumbnails"][-1]["url"],
         # Comment properties
         "commentID": comment["commentId"],
         "likeCount": 0,

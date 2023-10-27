@@ -10,5 +10,5 @@ print(f"Channel has Community page: {channel.hasCommunity()}")
 posts = channel.fetchPosts()
 for post in posts:
     print(post.contentText)
-    comments = post.fetchComments(newestFirst = True)
+    comments = post.fetchComments(chronological = True)
     print(comments)

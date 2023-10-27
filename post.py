@@ -10,7 +10,7 @@ class Post:
         for key in self.data:
             setattr(self, key, self.data[key])
 
-    def fetchComments(self, newestFirst = False):
+    def fetchComments(self, chronological = False):
         # Request more post information including continuation token to fetch comments
         params = self.rawData["backstagePostThreadRenderer"]["post"]["backstagePostRenderer"]["publishedTimeText"]["runs"][0]["navigationEndpoint"]["browseEndpoint"]["params"]
         requestData = {
@@ -31,7 +31,7 @@ class Post:
             return []
 
         # Get continuation token for correct comment sort (Top or Newest First)
-        requestData["continuation"] = responseData["onResponseReceivedEndpoints"][0]["reloadContinuationItemsCommand"]["continuationItems"][0]["commentsHeaderRenderer"]["sortMenu"]["sortFilterSubMenuRenderer"]["subMenuItems"][int(newestFirst)]["serviceEndpoint"]["continuationCommand"]["token"]
+        requestData["continuation"] = responseData["onResponseReceivedEndpoints"][0]["reloadContinuationItemsCommand"]["continuationItems"][0]["commentsHeaderRenderer"]["sortMenu"]["sortFilterSubMenuRenderer"]["subMenuItems"][int(chronological)]["serviceEndpoint"]["continuationCommand"]["token"]
 
         commentsData = []
         while True:
@@ -48,6 +48,8 @@ class Post:
                 commentsData += responseData["onResponseReceivedEndpoints"][0]["appendContinuationItemsAction"]["continuationItems"]
             # Return if last page
             if not "continuationItemRenderer" in commentsData[-1]:
+                # Reverse so comments are in chronological order
+                commentsData.reverse()
                 return [Comment(data) for data in commentsData]
 
             # Grab continuation token
