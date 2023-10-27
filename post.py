@@ -1,5 +1,6 @@
 import requests, json
 from parsepost import parsePost
+from comment import Comment
 
 class Post:
     def __init__(self, data):
@@ -47,7 +48,7 @@ class Post:
                 commentsData += responseData["onResponseReceivedEndpoints"][0]["appendContinuationItemsAction"]["continuationItems"]
             # Return if last page
             if not "continuationItemRenderer" in commentsData[-1]:
-                return commentsData
+                return [Comment(data) for data in commentsData]
 
             # Grab continuation token
             requestData["continuation"] = commentsData.pop()["continuationItemRenderer"]["continuationEndpoint"]["continuationCommand"]["token"]
