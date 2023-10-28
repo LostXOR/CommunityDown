@@ -15,12 +15,22 @@ def parseComment(comment):
         "timeText": comment["publishedTimeText"]["runs"][0]["text"].removesuffix(" (edited)"),
         "edited": comment["publishedTimeText"]["runs"][0]["text"].endswith(" (edited)"),
         # Comment text
-        "contentText": comment["contentText"]["runs"][0]["text"],
+        "contentText": "",
     }
     # Like and reply counts
     likeCountString = comment["actionButtons"]["commentActionButtonsRenderer"]["likeButton"]["toggleButtonRenderer"]["accessibilityData"]["accessibilityData"]["label"]
     output["likeCount"] = int("".join([c for c in likeCountString if c.isdigit()]))
     if "replyCount" in comment:
             output["replyCount"] = comment["replyCount"]
+
+    # Parse comment content ("reverse" formatting)
+    for run in comment["contentText"]["runs"]:
+        if "bold" in run:
+            run["text"] = "*" + run["text"] + "*"
+        if "italics" in run:
+            run["text"] = "_" + run["text"] + "_"
+        if "strikethrough" in run:
+            run["text"] = "-" + run["text"] + "-"
+        output["contentText"] += run["text"]
 
     return output

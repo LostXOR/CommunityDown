@@ -59,7 +59,7 @@ class TestChannel(unittest.TestCase):
         self.assertEqual(channelInvalid.channelID(), None)
 
     def testFetchPosts(self):
-        self.assertEqual(len(channelNormal.fetchPosts()), 16)
+        self.assertEqual(len(channelNormal.fetchPosts()), 17)
         self.assertEqual(channelEmpty.fetchPosts(), [])
         self.assertEqual(channelNoCommunity.fetchPosts(), None)
         self.assertEqual(channelInvalid.fetchPosts(), None)
@@ -83,6 +83,11 @@ class parsePost(unittest.TestCase):
         post = testPosts[15]
         self.assertEqual(post.postID, "UgkxVWzwSGoR5O_JCxWGeBbIQALIb1grfk4u")
         self.assertEqual(post.contentText, "Test Post Many New\n\nLines\n\n\nSo Many\nNew\n\n\nLines\n\n\nbackslash n go brr\n\n\n\nowo\nuwu\nowo\nuwu")
+
+    def testLinkTextPost(self):
+        post = testPosts[16]
+        self.assertEqual(post.postID, "Ugkx9HySrooC8q8OlaGQnt3tuA1TeGaILbkC")
+        self.assertEqual(post.contentText, "Test Post With Link: https://example.com")
 
     def testTextImagePost(self):
         post = testPosts[1]
@@ -209,5 +214,22 @@ class parseComment(unittest.TestCase):
         self.assertEqual(chronoComments[33].contentText, "youtube api = stupid and i hate (edited nvm I love youtube api (jk))")
         self.assertEqual(chronoComments[33].replyCount, 4)
         self.assertTrue(chronoComments[33].edited)
+
+        self.assertEqual(chronoComments[34].commentID, "Ugw6VVsZhhzklrzJdMV4AaABAg")
+        self.assertEqual(chronoComments[34].contentText,
+"""Comment Text Parsing
+Emojis::face-blue-smiling: also :text-green-game-over:
+
+Bold: *bold*
+Italic: _italic_
+Strikethrough: -strikethrough-
+All: -_*bold italic strikethrough*_-
+
+Link: https://example.com
+
+More newlines
+
+
+uwu""")
 
 unittest.main()
