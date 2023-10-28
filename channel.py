@@ -32,7 +32,7 @@ class Channel:
     def channelID(self):
         return self.__channelID
 
-    def fetchPosts(self):
+    def fetchPosts(self, limit = 1):
         # JSON data sent in POST to request community pages
         # params is a magic string that's used to get the community tab, no idea what it's for
         nextRequestData = {
@@ -44,7 +44,7 @@ class Channel:
         if not self.hasCommunity() or not self.exists():
             return None
 
-        while True:
+        while len(posts) < limit:
             # Request community page from the API
             response = requests.post("https://www.youtube.com/youtubei/v1/browse?prettyprint=false",
             headers = {"Content-Type": "application/json"}, data = json.dumps(nextRequestData))
@@ -76,3 +76,8 @@ class Channel:
             contPost = posts.pop()
             contToken = contPost["continuationItemRenderer"]["continuationEndpoint"]["continuationCommand"]["token"]
             nextRequestData["continuation"] = contToken
+
+        # Limit was hit, so return posts up to limit
+        posts = [Post(data) for data in posts[:limit]]
+        posts.reverse()
+        return posts

@@ -9,8 +9,10 @@ class Post:
         self.data = parsePost(self.rawData)
         for key in self.data:
             setattr(self, key, self.data[key])
+        # Unset until fetchComments is executed
+        self.commentCount = None
 
-    def fetchComments(self, chronological = False):
+    def fetchComments(self, chronological = False, limit = -1):
         # Request more post information including continuation token to fetch comments
         params = self.rawData["backstagePostThreadRenderer"]["post"]["backstagePostRenderer"]["publishedTimeText"]["runs"][0]["navigationEndpoint"]["browseEndpoint"]["params"]
         requestData = {
@@ -26,6 +28,9 @@ class Post:
         headers = {"Content-Type": "application/json"}, data = json.dumps(requestData))
         responseData = response.json()
 
+        # Get exact comment count from response
+        self.commentCount = int(responseData["onResponseReceivedEndpoints"][0]["reloadContinuationItemsCommand"]["continuationItems"][0]["commentsHeaderRenderer"]["countText"]["runs"][0]["text"].replace(",", ""))
+
         # Return empty array if post has no comments
         if not "continuationItems" in responseData["onResponseReceivedEndpoints"][1]["reloadContinuationItemsCommand"]:
             return []
@@ -33,8 +38,9 @@ class Post:
         # Get continuation token for correct comment sort (Top or Newest First)
         requestData["continuation"] = responseData["onResponseReceivedEndpoints"][0]["reloadContinuationItemsCommand"]["continuationItems"][0]["commentsHeaderRenderer"]["sortMenu"]["sortFilterSubMenuRenderer"]["subMenuItems"][int(chronological)]["serviceEndpoint"]["continuationCommand"]["token"]
 
+        # Request comments until limit is hit or all comments are requested
         commentsData = []
-        while True:
+        while len(commentsData) < limit:
             # Request next batch of comments
             response = requests.post("https://www.youtube.com/youtubei/v1/browse?prettyprint=false",
             headers = {"Content-Type": "application/json"}, data = json.dumps(requestData))
@@ -54,3 +60,8 @@ class Post:
 
             # Grab continuation token
             requestData["continuation"] = commentsData.pop()["continuationItemRenderer"]["continuationEndpoint"]["continuationCommand"]["token"]
+
+        # Limit was hit, so return comments up to limit
+        comments = [Comment(data) for data in commentsData[:limit]]
+        comments.reverse()
+        return comments
