@@ -32,19 +32,20 @@ class Channel:
     def channelID(self):
         return self.__channelID
 
-    def fetchPosts(self, limit = 1):
+    def fetchPosts(self, limit = -1):
         # JSON data sent in POST to request community pages
         # params is a magic string that's used to get the community tab, no idea what it's for
         nextRequestData = {
             "context": {"client": {"clientName": "WEB", "clientVersion": "2.20231016"}},
             "browseId": self.__channelID, "params": "Egljb21tdW5pdHnyBgQKAkoA"
         }
-        posts = []
-
+        # Channel doesn't exist or doesn't have a community page
         if not self.hasCommunity() or not self.exists():
             return None
 
-        while len(posts) < limit:
+        # Request posts until limit is hit or all posts have been requested
+        posts = []
+        while limit == -1 or len(posts) < limit:
             # Request community page from the API
             response = requests.post("https://www.youtube.com/youtubei/v1/browse?prettyprint=false",
             headers = {"Content-Type": "application/json"}, data = json.dumps(nextRequestData))
@@ -64,12 +65,9 @@ class Channel:
             if "messageRenderer" in posts[0]:
                 return []
 
-            # Last page (return what we have)
+            # Last page (exit with what we have)
             if "backstagePostThreadRenderer" in posts[-1]:
-                # Reverse so posts are in chronological order
-                posts.reverse()
-                # Convert to Post objects and return
-                return [Post(data) for data in posts]
+                break
 
             # Pop last "post" (a dummy post) from list (if we haven't hit the end) and extract the continuation token
             # Continuation token is a magic string we need to send the API to get the next page
@@ -77,7 +75,7 @@ class Channel:
             contToken = contPost["continuationItemRenderer"]["continuationEndpoint"]["continuationCommand"]["token"]
             nextRequestData["continuation"] = contToken
 
-        # Limit was hit, so return posts up to limit
-        posts = [Post(data) for data in posts[:limit]]
+        # Limit was hit or last page was requested, so return posts up to limit
+        if limit != -1 and len(posts) > limit: posts = posts[:limit]
         posts.reverse()
-        return posts
+        return [Post(post) for post in posts]

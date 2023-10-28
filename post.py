@@ -40,7 +40,7 @@ class Post:
 
         # Request comments until limit is hit or all comments are requested
         commentsData = []
-        while len(commentsData) < limit:
+        while limit == -1 or len(commentsData) < limit:
             # Request next batch of comments
             response = requests.post("https://www.youtube.com/youtubei/v1/browse?prettyprint=false",
             headers = {"Content-Type": "application/json"}, data = json.dumps(requestData))
@@ -52,16 +52,14 @@ class Post:
             # Subsequent pages
             else:
                 commentsData += responseData["onResponseReceivedEndpoints"][0]["appendContinuationItemsAction"]["continuationItems"]
-            # Return if last page
+            # Exit if last page
             if not "continuationItemRenderer" in commentsData[-1]:
-                # Reverse so comments are in chronological order
-                commentsData.reverse()
-                return [Comment(data) for data in commentsData]
+                break
 
             # Grab continuation token
             requestData["continuation"] = commentsData.pop()["continuationItemRenderer"]["continuationEndpoint"]["continuationCommand"]["token"]
 
-        # Limit was hit, so return comments up to limit
-        comments = [Comment(data) for data in commentsData[:limit]]
-        comments.reverse()
-        return comments
+        # Limit was hit or last page was requested, so return comments up to limit
+        if limit != -1 and len(commentsData) > limit: commentsData = commentsData[:limit]
+        commentsData.reverse()
+        return [Comment(data) for data in commentsData]
