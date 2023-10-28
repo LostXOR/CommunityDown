@@ -28,7 +28,7 @@ def parsePost(post):
 
     # Post text contents
     if "runs" in post["contentText"]:
-        output["contentText"] = post["contentText"]["runs"][0]["text"]
+        output["contentText"] = "".join([run["text"] for run in post["contentText"]["runs"]])
 
     # Post has some sort of attachment
     if "backstageAttachment" in post:
