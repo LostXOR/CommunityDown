@@ -79,8 +79,14 @@ class parsePost(unittest.TestCase):
         self.assertEqual(post.contentText, "Test Post Text Only")
         self.assertEqual(post.attachment, None)
 
+    def testMultiLineTextPost(self):
+        post = testPosts[15]
+        self.assertEqual(post.postID, "UgkxVWzwSGoR5O_JCxWGeBbIQALIb1grfk4u")
+        self.assertEqual(post.contentText, "Test Post Many New\n\nLines\n\n\nSo Many\nNew\n\n\nLines\n\n\nbackslash n go brr\n\n\n\nowo\nuwu\nowo\nuwu")
+
     def testTextImagePost(self):
         post = testPosts[1]
+        self.assertEqual(post.postID, "UgkxDE7a1eW5RZGvEm4jXldpMxHDuM6UpruZ")
         self.assertEqual(post.contentText, "Test Post Text With Image")
         self.assertEqual(post.attachment["type"], "image")
         self.assertEqual(post.attachment["url"], "https://yt3.ggpht.com/LD3QXmo4_3ix3b2axlqfJeUQ1YvOZdeLCkIY646w9xCOj-IR3V2u00xrWTyOEzcv1Z0gBTND0hT8=s512-c-fcrop64=1,00000000ffffffff-nd-v1")
