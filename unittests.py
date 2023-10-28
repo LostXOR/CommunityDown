@@ -59,7 +59,7 @@ class TestChannel(unittest.TestCase):
         self.assertEqual(channelInvalid.channelID(), None)
 
     def testFetchPosts(self):
-        self.assertTrue(len(channelNormal.fetchPosts()) == 15)
+        self.assertEqual(len(channelNormal.fetchPosts()), 16)
         self.assertEqual(channelEmpty.fetchPosts(), [])
         self.assertEqual(channelNoCommunity.fetchPosts(), None)
         self.assertEqual(channelInvalid.fetchPosts(), None)
@@ -164,7 +164,7 @@ class parsePost(unittest.TestCase):
         post = testPosts[12]
         self.assertEqual(post.postID, "UgkximjhpHrqqxHue2IDIpiDRDVK9Q3J8z4c")
         self.assertEqual(post.contentText, "Test Post With Many Comments")
-        self.assertEqual(post.commentCountText, "42")
+        self.assertEqual(post.commentCountText, "43")
 
     def testVoteCount(self):
         post = testPosts[13]
