@@ -40,10 +40,10 @@ class Post:
             timeout = 5)
 
         # Request first comments and some other data
-        request_data["continuation"] = response.json()["contents"]["twoColumnBrowseResultsRenderer"] \
-            ["tabs"][0]["tabRenderer"]["content"]["sectionListRenderer"]["contents"][1] \
-            ["itemSectionRenderer"]["contents"][0]["continuationItemRenderer"] \
-            ["continuationEndpoint"]["continuationCommand"]["token"]
+        request_data["continuation"] = response.json()["contents"] \
+            ["twoColumnBrowseResultsRenderer"]["tabs"][0]["tabRenderer"]["content"] \
+            ["sectionListRenderer"]["contents"][1]["itemSectionRenderer"]["contents"][0] \
+            ["continuationItemRenderer"]["continuationEndpoint"]["continuationCommand"]["token"]
         response = requests.post("https://www.youtube.com/youtubei/v1/browse?prettyprint=false",
             headers = {"Content-Type": "application/json"},
             data = json.dumps(request_data),

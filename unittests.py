@@ -34,7 +34,7 @@ channelInvalid = Channel("@invalid channel")
 # Posts of the test channel for testing Post (and by extension fetch_posts and parse_post)
 testPosts = channelNormal.fetch_posts()
 
-# Comments of some test posts for testing Comment (and by extension fetch_comments and parse_comment)
+# Comments of test posts for testing Comment (and by extension fetch_comments and parse_comment)
 noComments = testPosts[0].fetch_comments()
 oneComment = testPosts[11].fetch_comments()
 topComments = testPosts[12].fetch_comments()
@@ -75,7 +75,7 @@ class TestChannel(unittest.TestCase):
         self.assertEqual(channelInvalid.fetch_posts(), None)
 
     def test_fetch_posts_limit(self):
-        """Test Channel.fetch_posts limit function returns correct amount of posts and the right posts."""
+        """Test Channel.fetch_posts limit returns correct amount of posts and the right posts."""
         limit0 = channelNormal.fetch_posts(limit = 0)
         limit7 = channelNormal.fetch_posts(limit = 7)
         limit13 = channelNormal.fetch_posts(limit = 13)
@@ -200,7 +200,7 @@ uwu""")
 
     def test_video_embed(self):
         """Test that posts with embedded videos are parsed correctly."""
-        # TODO: This should be changed to a video on the test channel at some point
+        # This should be changed to a video on the test channel at some point
         post = testPosts[8]
         self.assertEqual(post.postID, "Ugkx0mOGgVuFfy8znxJWfIdryu6XL2iQHdOu")
         self.assertEqual(post.contentText, "Video Post")
@@ -213,7 +213,7 @@ uwu""")
         self.assertEqual(post.attachment["authorDisplayName"], "Rick Astley")
         self.assertTrue(post.attachment["timeText"].endswith("years ago"))
         self.assertEqual(post.attachment["lengthText"], "3:33")
-        self.assertTrue(post.attachment["viewCount"] >= 1462235415) # View count as of writing this test
+        self.assertTrue(post.attachment["viewCount"] >= 1462235415) # View count as of writing this
         self.assertTrue(post.attachment["viewCountText"].endswith("views"))
 
     def test_quiz(self):
@@ -305,7 +305,7 @@ More newlines
 uwu""")
 
     def test_fetch_comments_limit(self):
-        """Test Post.fetch_comments limit function returns correct amount of comments and the right comments."""
+        """Test Post.fetch_comments limit function returns correct comments."""
         limit0 = testPosts[12].fetch_comments(limit = 0)
         limit17 = testPosts[12].fetch_comments(limit = 17)
         limit32 = testPosts[12].fetch_comments(limit = 32)
