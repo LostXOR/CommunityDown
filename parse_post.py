@@ -1,6 +1,5 @@
 """Home to parse_post, and nothing else."""
-# Parse the raw post JSON returned by the API into a more friendly format by stripping non-essential data
-# This function contains a lot of long JSON paths but there's really no way around that
+
 def parse_post(post):
     """Parse the raw post JSON returned by the API into a more friendly format.
     Strips non-essential data and grabs only what we want.
@@ -29,7 +28,8 @@ def parse_post(post):
     like_count_string = post["actionButtons"]["commentActionButtonsRenderer"]["likeButton"] \
         ["toggleButtonRenderer"]["accessibilityData"]["accessibilityData"]["label"]
     output["likeCount"] = int("".join([c for c in like_count_string if c.isdigit()]))
-    if "text" in post["actionButtons"]["commentActionButtonsRenderer"]["replyButton"]["buttonRenderer"]:
+    if "text" in post["actionButtons"]["commentActionButtonsRenderer"] \
+        ["replyButton"]["buttonRenderer"]:
         output["comment_countText"] = post["actionButtons"]["commentActionButtonsRenderer"] \
             ["replyButton"]["buttonRenderer"]["text"]["simpleText"]
 
@@ -75,10 +75,12 @@ def parse_post(post):
                 "ID": attachment["videoRenderer"]["videoId"],
                 "thumbnailURL": attachment["videoRenderer"]["thumbnail"]["thumbnails"][-1]["url"],
                 "title": attachment["videoRenderer"]["title"]["runs"][0]["text"],
-                "descriptionSnippet": attachment["videoRenderer"]["descriptionSnippet"]["runs"][0]["text"],
-                "authorDisplayName": attachment["videoRenderer"]["longBylineText"]["runs"][0]["text"],
-                "authorID": attachment["videoRenderer"]["longBylineText"]["runs"][0] \
-                    ["navigationEndpoint"]["browseEndpoint"]["browseId"],
+                "descriptionSnippet": attachment["videoRenderer"]["descriptionSnippet"] \
+                    ["runs"][0]["text"],
+                "authorDisplayName": attachment["videoRenderer"]["longBylineText"] \
+                    ["runs"][0]["text"],
+                "authorID": attachment["videoRenderer"]["longBylineText"] \
+                    ["runs"][0]["navigationEndpoint"]["browseEndpoint"]["browseId"],
                 "timeText": attachment["videoRenderer"]["publishedTimeText"]["simpleText"],
                 "lengthText": attachment["videoRenderer"]["lengthText"]["simpleText"],
                 "viewCount": int(attachment["videoRenderer"]["viewCountText"]["simpleText"]
@@ -94,7 +96,8 @@ def parse_post(post):
                     for o in attachment["quizRenderer"]["choices"]],
                 "correctChoice": [o["isCorrect"]
                     for o in attachment["quizRenderer"]["choices"]].index(True),
-                "explanation": attachment["quizRenderer"]["choices"][0]["explanation"]["runs"][0]["text"],
+                "explanation": attachment["quizRenderer"]["choices"][0]["explanation"] \
+                    ["runs"][0]["text"],
                 "answerCountText": attachment["quizRenderer"]["totalVotes"]["simpleText"]
             }
 
