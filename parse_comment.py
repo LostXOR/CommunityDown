@@ -1,3 +1,5 @@
+"""You guessed it, the parse_comment function is here."""
+
 def parse_comment(comment):
     """Parse the JSON data of comments returned by the API into something comprehensible."""
     # Get the comment data we actually want
@@ -18,7 +20,8 @@ def parse_comment(comment):
         "contentText": "",
     }
     # Like and reply counts
-    like_count_string = comment["actionButtons"]["commentActionButtonsRenderer"]["likeButton"]["toggleButtonRenderer"]["accessibilityData"]["accessibilityData"]["label"]
+    like_count_string = comment["actionButtons"]["commentActionButtonsRenderer"]["likeButton"] \
+        ["toggleButtonRenderer"]["accessibilityData"]["accessibilityData"]["label"]
     output["likeCount"] = int("".join([c for c in like_count_string if c.isdigit()]))
     if "replyCount" in comment:
         output["replyCount"] = comment["replyCount"]

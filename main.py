@@ -1,3 +1,5 @@
+"""Just a test main for now, please ignore."""
+
 from channel import Channel
 
 test_channel = "@CommunityDownTestChannel"

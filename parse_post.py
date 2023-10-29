@@ -1,3 +1,4 @@
+"""Home to parse_post, and nothing else."""
 # Parse the raw post JSON returned by the API into a more friendly format by stripping non-essential data
 # This function contains a lot of long JSON paths but there's really no way around that
 def parse_post(post):
@@ -25,10 +26,12 @@ def parse_post(post):
     }
 
     # Like and comment counts
-    like_count_string = post["actionButtons"]["commentActionButtonsRenderer"]["likeButton"]["toggleButtonRenderer"]["accessibilityData"]["accessibilityData"]["label"]
+    like_count_string = post["actionButtons"]["commentActionButtonsRenderer"]["likeButton"] \
+        ["toggleButtonRenderer"]["accessibilityData"]["accessibilityData"]["label"]
     output["likeCount"] = int("".join([c for c in like_count_string if c.isdigit()]))
     if "text" in post["actionButtons"]["commentActionButtonsRenderer"]["replyButton"]["buttonRenderer"]:
-        output["comment_countText"] = post["actionButtons"]["commentActionButtonsRenderer"]["replyButton"]["buttonRenderer"]["text"]["simpleText"]
+        output["comment_countText"] = post["actionButtons"]["commentActionButtonsRenderer"] \
+            ["replyButton"]["buttonRenderer"]["text"]["simpleText"]
 
     # Post text contents
     if "runs" in post["contentText"]:
@@ -41,22 +44,28 @@ def parse_post(post):
         if "backstageImageRenderer" in attachment:
             output["attachment"] = {
                 "type": "image",
-                "url": attachment["backstageImageRenderer"]["image"]["thumbnails"][-1]["url"]
+                "URL": attachment["backstageImageRenderer"]["image"]["thumbnails"][-1]["url"]
             }
         # Multiple images
         elif "postMultiImageRenderer" in attachment:
             output["attachment"] = {
                 "type": "multiImage",
-                "urls": [o["backstageImageRenderer"]["image"]["thumbnails"][-1]["url"] for o in attachment["postMultiImageRenderer"]["images"]]
+                "URLs": [o["backstageImageRenderer"]["image"]["thumbnails"][-1]["url"]
+                    for o in attachment["postMultiImageRenderer"]["images"]]
             }
         # Poll
         elif "pollRenderer" in attachment:
             output["attachment"] = {
                 "type": "poll",
                 "votesText": attachment["pollRenderer"]["totalVotes"]["simpleText"],
-                "choices": [o["text"]["runs"][0]["text"] for o in attachment["pollRenderer"]["choices"]],
-                "imageURLs": [o["image"]["thumbnails"][-1]["url"] for o in attachment["pollRenderer"]["choices"]] if "image" in attachment["pollRenderer"]["choices"][0] else None
+                "choices": [o["text"]["runs"][0]["text"]
+                    for o in attachment["pollRenderer"]["choices"]],
+                "imageURLs": None
             }
+            if "image" in attachment["pollRenderer"]["choices"][0]:
+                output["attachment"]["imageURLs"] = [o["image"]["thumbnails"][-1]["url"]
+                    for o in attachment["pollRenderer"]["choices"]]
+
         # Video
         elif "videoRenderer" in attachment:
             output["attachment"] = {
@@ -66,18 +75,23 @@ def parse_post(post):
                 "title": attachment["videoRenderer"]["title"]["runs"][0]["text"],
                 "descriptionSnippet": attachment["videoRenderer"]["descriptionSnippet"]["runs"][0]["text"],
                 "authorDisplayName": attachment["videoRenderer"]["longBylineText"]["runs"][0]["text"],
-                "authorID": attachment["videoRenderer"]["longBylineText"]["runs"][0]["navigationEndpoint"]["browseEndpoint"]["browseId"],
+                "authorID": attachment["videoRenderer"]["longBylineText"]["runs"][0] \
+                    ["navigationEndpoint"]["browseEndpoint"]["browseId"],
                 "timeText": attachment["videoRenderer"]["publishedTimeText"]["simpleText"],
                 "lengthText": attachment["videoRenderer"]["lengthText"]["simpleText"],
-                "viewCount": int("".join([c for c in attachment["videoRenderer"]["viewCountText"]["simpleText"] if c.isdigit()])),
+                "viewCount": int(attachment["videoRenderer"]["viewCountText"]["simpleText"]
+                    .removesuffix(" views")
+                    .replace(",", "")),
                 "viewCountText": attachment["videoRenderer"]["shortViewCountText"]["simpleText"]
             }
         # Quiz
         elif "quizRenderer" in attachment:
             output["attachment"] = {
                 "type": "quiz",
-                "choices": [o["text"]["runs"][0]["text"] for o in attachment["quizRenderer"]["choices"]],
-                "correctChoice": [o["isCorrect"] for o in attachment["quizRenderer"]["choices"]].index(True),
+                "choices": [o["text"]["runs"][0]["text"]
+                    for o in attachment["quizRenderer"]["choices"]],
+                "correctChoice": [o["isCorrect"]
+                    for o in attachment["quizRenderer"]["choices"]].index(True),
                 "explanation": attachment["quizRenderer"]["choices"][0]["explanation"]["runs"][0]["text"],
                 "answerCountText": attachment["quizRenderer"]["totalVotes"]["simpleText"]
             }

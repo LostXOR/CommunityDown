@@ -1,3 +1,6 @@
+"""Comment class! Pylint wants module docstrings, but since each module only has one class/function
+and they already have docstrings it's kinda pointless. But I want to appease the Pylint gods. :)"""
+
 from parse_comment import parse_comment
 
 class Comment:

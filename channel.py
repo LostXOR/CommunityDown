@@ -1,3 +1,5 @@
+"""The home of the Channel class."""
+
 import re
 import json
 import requests
@@ -24,7 +26,8 @@ class Channel:
         self.__channel_id = None
         if 'href="https://www.youtube.com/channel/' in response.text:
             self.__channel_exists = True
-            self.__channel_id = re.findall(r'(?<=href="https:\/\/www\.youtube\.com\/channel\/).*?(?=")', response.text)[0]
+            self.__channel_id = re.findall(r'(?<=href="https:\/\/www\.youtube\.com\/channel\/).*?(?=")',
+                response.text)[0]
         if '"title":"Community"' in response.text:
             self.__has_community = True
 
@@ -64,11 +67,13 @@ class Channel:
             if "contents" in response_json:
                 tabs = response_json["contents"]["twoColumnBrowseResultsRenderer"]["tabs"][:-1]
                 community_tab = [tab for tab in tabs if tab["tabRenderer"]["title"] == "Community"][0]
-                posts += community_tab["tabRenderer"]["content"]["sectionListRenderer"]["contents"][0]["itemSectionRenderer"]["contents"]
+                posts += community_tab["tabRenderer"]["content"]["sectionListRenderer"]["contents"] \
+                    [0]["itemSectionRenderer"]["contents"]
 
             # Subsequent pages (add to posts list)
             elif "onResponseReceivedEndpoints" in response_json:
-                posts += response_json["onResponseReceivedEndpoints"][0]["appendContinuationItemsAction"]["continuationItems"]
+                posts += response_json["onResponseReceivedEndpoints"][0] \
+                    ["appendContinuationItemsAction"]["continuationItems"]
 
             # No community posts on channel (return empty)
             if "messageRenderer" in posts[0]:
@@ -81,7 +86,8 @@ class Channel:
             # Pop last "post" (a dummy post) from list (if we haven't hit the end) and extract the continuation token
             # Continuation token is a magic string we need to send the API to get the next page
             cont_post = posts.pop()
-            cont_token = cont_post["continuationItemRenderer"]["continuationEndpoint"]["continuationCommand"]["token"]
+            cont_token = cont_post["continuationItemRenderer"]["continuationEndpoint"] \
+                ["continuationCommand"]["token"]
             next_request_data["continuation"] = cont_token
 
         # Limit was hit or last page was requested, so return posts up to limit
