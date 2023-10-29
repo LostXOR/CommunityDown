@@ -4,16 +4,19 @@ from parse_post import parse_post
 from comment import Comment
 
 class Post:
+    """Class representing a community post."""
     def __init__(self, data):
-        # Parse and store post data in this object
+        """Parse and store raw post data as attributes of this object."""
         self.raw_data = data
         self.data = parse_post(self.raw_data)
-        for key in self.data:
-            setattr(self, key, self.data[key])
+        for key, value in self.data.items():
+            setattr(self, key, value)
         # Unset until fetch_comments is executed
         self.comment_count = None
 
     def fetch_comments(self, chronological = False, limit = -1):
+        """Fetches comments from this community post."""
+
         # Request more post information including continuation token to fetch comments
         params = self.raw_data["backstagePostThreadRenderer"]["post"]["backstagePostRenderer"]["publishedTimeText"]["runs"][0]["navigationEndpoint"]["browseEndpoint"]["params"]
         request_data = {

@@ -1,5 +1,5 @@
-# Parse the JSON data of comments returned by the API into something comprehensible
 def parse_comment(comment):
+    """Parse the JSON data of comments returned by the API into something comprehensible."""
     # Get the comment data we actually want
     comment = comment["commentThreadRenderer"]["comment"]["commentRenderer"]
 

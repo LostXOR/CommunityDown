@@ -1,6 +1,10 @@
 # Parse the raw post JSON returned by the API into a more friendly format by stripping non-essential data
 # This function contains a lot of long JSON paths but there's really no way around that
 def parse_post(post):
+    """Parse the raw post JSON returned by the API into a more friendly format.
+    Strips non-essential data and grabs only what we want.
+    """
+
     # Get the data we really want
     post = post["backstagePostThreadRenderer"]["post"]["backstagePostRenderer"]
     output = {

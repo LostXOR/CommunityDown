@@ -4,7 +4,10 @@ import requests
 from post import Post
 
 class Channel:
+    """Class representing a YouTube channel."""
+
     def __init__(self, channel):
+        """Parse the channel string provided and check if the channel exists."""
         # Attempt to get channel page
         if channel.startswith("@"):
             response = requests.get("https://youtube.com/" + channel)
@@ -21,20 +24,24 @@ class Channel:
         self.__channel_id = None
         if 'href="https://www.youtube.com/channel/' in response.text:
             self.__channel_exists = True
-            self.__channel_id = re.findall('(?<=href="https:\/\/www\.youtube\.com\/channel\/).*?(?=")', response.text)[0]
+            self.__channel_id = re.findall(r'(?<=href="https:\/\/www\.youtube\.com\/channel\/).*?(?=")', response.text)[0]
         if '"title":"Community"' in response.text:
             self.__has_community = True
 
     def exists(self):
+        """Return whether the channel exists."""
         return self.__channel_exists
 
     def has_community(self):
+        """Return whether the channel has a community tab."""
         return self.__has_community
 
     def channel_id(self):
+        """Return the channel's ID."""
         return self.__channel_id
 
     def fetch_posts(self, limit = -1):
+        """Fetch community posts for the channel up to limit."""
         # JSON data sent in POST to request community pages
         # params is a magic string that's used to get the community tab, no idea what it's for
         next_request_data = {
