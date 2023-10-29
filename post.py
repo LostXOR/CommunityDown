@@ -9,22 +9,30 @@ class Post:
     """Class representing a community post."""
     def __init__(self, data):
         """Parse and store raw post data as attributes of this object."""
-        self.raw_data = data
-        self.data = parse_post(self.raw_data)
-        for key, value in self.data.items():
+        self.__raw_data = data
+        self.__data = parse_post(self.__raw_data)
+        for key, value in self.__data.items():
             setattr(self, key, value)
         # Unset until fetch_comments is executed
         self.comment_count = None
+
+    def data(self):
+        """Return the parsed post data as a dict"""
+        return self.__data
+
+    def raw_data(self):
+        """Return the raw post data as a dict"""
+        return self.__raw_data
 
     def fetch_comments(self, chronological = False, limit = -1):
         """Fetches comments from this community post."""
 
         # Request more post information including continuation token to fetch comments
-        params = self.raw_data["backstagePostThreadRenderer"]["post"]["backstagePostRenderer"] \
+        params = self.__raw_data["backstagePostThreadRenderer"]["post"]["backstagePostRenderer"] \
             ["publishedTimeText"]["runs"][0]["navigationEndpoint"]["browseEndpoint"]["params"]
         request_data = {
             "context": {"client": {"clientName": "WEB", "clientVersion": "2.20231016"}},
-            "browseId": self.authorID, "params": params
+            "browseId": self.__data["authorID"], "params": params
         }
         response = requests.post("https://www.youtube.com/youtubei/v1/browse?prettyprint=false",
             headers = {"Content-Type": "application/json"},

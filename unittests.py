@@ -304,7 +304,7 @@ More newlines
 
 uwu""")
 
-    def test_fetch_comments_imit(self):
+    def test_fetch_comments_limit(self):
         """Test Post.fetch_comments limit function returns correct amount of comments and the right comments."""
         limit0 = testPosts[12].fetch_comments(limit = 0)
         limit17 = testPosts[12].fetch_comments(limit = 17)

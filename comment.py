@@ -7,7 +7,15 @@ class Comment:
     """Class representing a comment on a community post."""
     def __init__(self, data):
         """Parse and store raw comment data as attributes of this object."""
-        self.raw_data = data
-        self.data = parse_comment(self.raw_data)
-        for key, value in self.data.items():
+        self.__raw_data = data
+        self.__data = parse_comment(self.__raw_data)
+        for key, value in self.__data.items():
             setattr(self, key, value)
+
+    def data(self):
+        """Return the parsed comment data as a dict"""
+        return self.__data
+
+    def raw_data(self):
+        """Return the raw comment data as a dict"""
+        return self.__raw_data

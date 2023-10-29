@@ -2,9 +2,9 @@
 
 from channel import Channel
 
-test_channel = "@CommunityDownTestChannel"
+TEST_CHANNEL = "@CommunityDownTestChannel"
 
-channel = Channel(test_channel)
+channel = Channel(TEST_CHANNEL)
 print(f"Channel exists: {channel.exists()}")
 print(f"Channnel ID: {channel.channel_id()}")
 print(f"Channel has Community page: {channel.has_community()}")
