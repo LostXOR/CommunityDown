@@ -12,13 +12,13 @@ class Channel:
         """Parse the channel string provided and check if the channel exists."""
         # Attempt to get channel page
         if channel.startswith("@"):
-            response = requests.get("https://youtube.com/" + channel)
+            response = requests.get("https://youtube.com/" + channel, timeout = 5)
         elif channel.startswith("https://"):
-            response = requests.get(channel)
+            response = requests.get(channel, timeout = 5)
         elif "youtube.com" in channel:
-            response = requests.get("https://" + channel)
+            response = requests.get("https://" + channel, timeout = 5)
         else:
-            response = requests.get("https://youtube.com/channel/" + channel)
+            response = requests.get("https://youtube.com/channel/" + channel, timeout = 5)
 
         # Check whether channel exists and has a Community tab
         self.__channel_exists = False
@@ -60,7 +60,9 @@ class Channel:
         while limit == -1 or len(posts) < limit:
             # Request community page from the API
             response = requests.post("https://www.youtube.com/youtubei/v1/browse?prettyprint=false",
-            headers = {"Content-Type": "application/json"}, data = json.dumps(next_request_data))
+                headers = {"Content-Type": "application/json"},
+                data = json.dumps(next_request_data),
+                timeout = 5)
             response_json = response.json()
 
             # First page of community posts (add to posts list)

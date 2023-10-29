@@ -27,7 +27,9 @@ class Post:
             "browseId": self.authorID, "params": params
         }
         response = requests.post("https://www.youtube.com/youtubei/v1/browse?prettyprint=false",
-        headers = {"Content-Type": "application/json"}, data = json.dumps(request_data))
+            headers = {"Content-Type": "application/json"},
+            data = json.dumps(request_data),
+            timeout = 5)
 
         # Request first comments and some other data
         request_data["continuation"] = response.json()["contents"]["twoColumnBrowseResultsRenderer"] \
@@ -35,7 +37,9 @@ class Post:
             ["itemSectionRenderer"]["contents"][0]["continuationItemRenderer"] \
             ["continuationEndpoint"]["continuationCommand"]["token"]
         response = requests.post("https://www.youtube.com/youtubei/v1/browse?prettyprint=false",
-        headers = {"Content-Type": "application/json"}, data = json.dumps(request_data))
+            headers = {"Content-Type": "application/json"},
+            data = json.dumps(request_data),
+            timeout = 5)
         response_data = response.json()
 
         # Get exact comment count from response
@@ -59,7 +63,9 @@ class Post:
         while limit == -1 or len(comments_data) < limit:
             # Request next batch of comments
             response = requests.post("https://www.youtube.com/youtubei/v1/browse?prettyprint=false",
-            headers = {"Content-Type": "application/json"}, data = json.dumps(request_data))
+                headers = {"Content-Type": "application/json"},
+                data = json.dumps(request_data),
+                timeout = 5)
             response_data = response.json()
 
             # First page

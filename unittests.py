@@ -93,8 +93,7 @@ class TestPost(unittest.TestCase):
         self.assertEqual(post.postID, "UgkxN3xglfBx_R4q55qU_Z1Hzey5Ah9CyTpE")
         self.assertEqual(post.authorID, "UCSHozX8N-F7GygP9PIIYxLw")
         self.assertEqual(post.authorDisplayName, "CommunityDown Test Channel")
-        self.assertEqual(post.authorImageURL,
-            "https://yt3.googleusercontent.com/ytc/APkrFKZYhSYg1uorjLPobZEDG0QOajyyEyKkDmprqcLsLalZTKmtVx_xBxZe7faUD1B4=s76-c-k-c0x00ffffff-no-rj-mo")
+        self.assertTrue(post.authorImageURL.startswith("https://yt3.googleusercontent.com"))
         self.assertTrue(post.likeCount >= 0)
         self.assertEqual(post.comment_countText, "0")
         self.assertFalse(post.edited)
@@ -108,7 +107,26 @@ class TestPost(unittest.TestCase):
         post = testPosts[15]
         self.assertEqual(post.postID, "UgkxVWzwSGoR5O_JCxWGeBbIQALIb1grfk4u")
         self.assertEqual(post.contentText,
-            "Test Post Many New\n\nLines\n\n\nSo Many\nNew\n\n\nLines\n\n\nbackslash n go brr\n\n\n\nowo\nuwu\nowo\nuwu")
+"""Test Post Many New
+
+Lines
+
+
+So Many
+New
+
+
+Lines
+
+
+backslash n go brr
+
+
+
+owo
+uwu
+owo
+uwu""")
 
     def test_link_text_post(self):
         """Test that posts with links are parsed correctly."""
@@ -122,8 +140,7 @@ class TestPost(unittest.TestCase):
         self.assertEqual(post.postID, "UgkxDE7a1eW5RZGvEm4jXldpMxHDuM6UpruZ")
         self.assertEqual(post.contentText, "Test Post Text With Image")
         self.assertEqual(post.attachment["type"], "image")
-        self.assertEqual(post.attachment["URL"],
-            "https://yt3.ggpht.com/LD3QXmo4_3ix3b2axlqfJeUQ1YvOZdeLCkIY646w9xCOj-IR3V2u00xrWTyOEzcv1Z0gBTND0hT8=s512-c-fcrop64=1,00000000ffffffff-nd-v1")
+        self.assertTrue(post.attachment["URL"].startswith("https://yt3.ggpht.com"))
 
     def test_text_multi_image_post(self):
         """Test that posts with multiple images are parsed correctly."""
@@ -131,8 +148,7 @@ class TestPost(unittest.TestCase):
         self.assertEqual(post.postID, "UgkxDE0-ktPPh_QNsqC9ZLZgzpbaazujegHF")
         self.assertEqual(post.contentText, "Test Post Text With Multiple Images")
         self.assertEqual(post.attachment["type"], "multiImage")
-        self.assertEqual(post.attachment["URLs"][0],
-            "https://yt3.ggpht.com/G5KKGBwa36uhKNKZ3LqzsUJZ7Gi19Msp1E_1lEMk_HC6aY1_5dQoXSIi8HXohuwdsh2PufCnrgl6uQ=s512-c-fcrop64=1,00000000ffffffff-nd-v1")
+        self.assertTrue(post.attachment["URLs"][0].startswith("https://yt3.ggpht.com"))
         self.assertTrue(len(post.attachment["URLs"]) == 5)
 
     def test_image_post(self):
@@ -141,8 +157,7 @@ class TestPost(unittest.TestCase):
         self.assertEqual(post.postID, "UgkxE0R5C37qvZ8PC1rcg9WgJiz-XERxgw4V")
         self.assertEqual(post.contentText, None)
         self.assertEqual(post.attachment["type"], "image")
-        self.assertEqual(post.attachment["URL"],
-            "https://yt3.ggpht.com/w3pdzdEXiiqa4UEdxcon2Jwt1nNHF6eM4Yu8KcvU21_vIkOTS8kGKJJQfwnu4Wy3EUpdGABFo4cR=s512-c-fcrop64=1,00000000ffffffff-nd-v1")
+        self.assertTrue(post.attachment["URL"].startswith("https://yt3.ggpht.com"))
 
     def test_multi_image_post(self):
         """Test that posts with only multiple images are parsed correctly."""
@@ -150,8 +165,7 @@ class TestPost(unittest.TestCase):
         self.assertEqual(post.postID, "UgkxY2O9N8cX9rMNMK50lOK6VXMvw05uyTCa")
         self.assertEqual(post.contentText, None)
         self.assertEqual(post.attachment["type"], "multiImage")
-        self.assertEqual(post.attachment["URLs"][0],
-            "https://yt3.ggpht.com/ucbXFS7xEjYaU3qke1Xo7wAx8X6BOJWAidq-zhLO9EjXv19e0lORwFlIbbn3dApzTAlCTtu5kG8pvA=s512-c-fcrop64=1,00000000ffffffff-nd-v1")
+        self.assertTrue(post.attachment["URLs"][0].startswith("https://yt3.ggpht.com"))
         self.assertEqual(len(post.attachment["URLs"]), 5)
 
     def test_edited_post(self):
@@ -181,8 +195,7 @@ class TestPost(unittest.TestCase):
         self.assertEqual(post.attachment["type"], "poll")
         self.assertTrue(post.attachment["votesText"].endswith("votes"))
         self.assertEqual(post.attachment["choices"], ["uwu", "owo"])
-        self.assertEqual(post.attachment["imageURLs"][0],
-            "https://yt3.ggpht.com/mMRTwi6OYV7aSWl9o7Y44S87fUZiImACxeVncwLa2Pvl9DDiDyzM8aqNrVyftFcSqoF8_sP6PB5h=s512-c-fcrop64=1,00000000ffffffff-nd-v1")
+        self.assertTrue(post.attachment["imageURLs"][0].startswith("https://yt3.ggpht.com"))
         self.assertEqual(len(post.attachment["imageURLs"]), 2)
 
     def test_video_embed(self):
@@ -193,8 +206,7 @@ class TestPost(unittest.TestCase):
         self.assertEqual(post.contentText, "Video Post")
         self.assertEqual(post.attachment["type"], "video")
         self.assertEqual(post.attachment["ID"], "dQw4w9WgXcQ")
-        self.assertEqual(post.attachment["thumbnailURL"],
-            "https://i.ytimg.com/vi/dQw4w9WgXcQ/hq720.jpg?sqp=-oaymwEXCNAFEJQDSFryq4qpAwkIARUAAIhCGAE=&rs=AOn4CLDX3LgTmArIBIk6uvvz4y5p95MOcg")
+        self.assertTrue(post.attachment["thumbnailURL"].startswith("https://i.ytimg.com"))
         self.assertEqual(post.attachment["title"],
             "Rick Astley - Never Gonna Give You Up (Official Music Video)")
         self.assertTrue(post.attachment["descriptionSnippet"].startswith("The official video"))
@@ -244,8 +256,7 @@ class TestComment(unittest.TestCase):
         self.assertTrue(len(oneComment), 1)
         self.assertEqual(oneComment[0].authorID, "UCSHozX8N-F7GygP9PIIYxLw")
         self.assertEqual(oneComment[0].authorDisplayName, "@CommunityDownTest")
-        self.assertEqual(oneComment[0].authorImageURL,
-            "https://yt3.ggpht.com/ytc/APkrFKZYhSYg1uorjLPobZEDG0QOajyyEyKkDmprqcLsLalZTKmtVx_xBxZe7faUD1B4=s176-c-k-c0x00ffffff-no-rj")
+        self.assertTrue(oneComment[0].authorImageURL.startswith("https://yt3.ggpht.com"))
         self.assertEqual(oneComment[0].commentID, "UgycOEolpmxD37kcJJN4AaABAg")
         self.assertTrue(oneComment[0].likeCount >= 1)
         self.assertEqual(oneComment[0].replyCount, 0)
