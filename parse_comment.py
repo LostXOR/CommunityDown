@@ -1,5 +1,5 @@
 # Parse the JSON data of comments returned by the API into something comprehensible
-def parseComment(comment):
+def parse_comment(comment):
     # Get the comment data we actually want
     comment = comment["commentThreadRenderer"]["comment"]["commentRenderer"]
 
@@ -18,10 +18,10 @@ def parseComment(comment):
         "contentText": "",
     }
     # Like and reply counts
-    likeCountString = comment["actionButtons"]["commentActionButtonsRenderer"]["likeButton"]["toggleButtonRenderer"]["accessibilityData"]["accessibilityData"]["label"]
-    output["likeCount"] = int("".join([c for c in likeCountString if c.isdigit()]))
+    like_count_string = comment["actionButtons"]["commentActionButtonsRenderer"]["likeButton"]["toggleButtonRenderer"]["accessibilityData"]["accessibilityData"]["label"]
+    output["likeCount"] = int("".join([c for c in like_count_string if c.isdigit()]))
     if "replyCount" in comment:
-            output["replyCount"] = comment["replyCount"]
+        output["replyCount"] = comment["replyCount"]
 
     # Parse comment content ("reverse" formatting)
     for run in comment["contentText"]["runs"]:

@@ -1,14 +1,14 @@
 from channel import Channel
 
-testChannel = "@CommunityDownTestChannel"
+test_channel = "@CommunityDownTestChannel"
 
-channel = Channel(testChannel)
+channel = Channel(test_channel)
 print(f"Channel exists: {channel.exists()}")
-print(f"Channnel ID: {channel.channelID()}")
-print(f"Channel has Community page: {channel.hasCommunity()}")
+print(f"Channnel ID: {channel.channel_id()}")
+print(f"Channel has Community page: {channel.has_community()}")
 
-posts = channel.fetchPosts()
+posts = channel.fetch_posts()
 for post in posts:
     print(post.contentText)
-    comments = post.fetchComments(chronological = True)
+    comments = post.fetch_comments(chronological = True)
     print(comments)

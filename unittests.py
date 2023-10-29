@@ -2,7 +2,7 @@ import unittest
 from channel import Channel
 
 # Various formats of channel name/ID to test channel resolving
-validChannelStrings = [
+valid_channel_strings = [
     "@CommunityDownTestChannel",
     "UCSHozX8N-F7GygP9PIIYxLw",
     "https://youtube.com/@CommunityDownTestChannel",
@@ -16,7 +16,7 @@ validChannelStrings = [
     "https://youtube.com/@CommunityDownTestNoCommunity",
     "youtube.com/channel/UCfRiDC9KN7TD3JFKKUG5Plg"
 ]
-invalidChannelStrings = [
+invalid_channel_strings = [
     "@invalid channel",
     "UCSHoxB12-34567P9PIIYxLw",
     "https://youtube.com/invalidchannelinvalidchannelinvalidchannel",
@@ -29,88 +29,88 @@ channelEmpty = Channel("@CommunityDownTestEmpty")
 channelNoCommunity = Channel("@CommunityDownTestNoCommunity")
 channelInvalid = Channel("@invalid channel")
 
-# Posts of the test channel for testing Post (and by extension fetchPosts and parsePost)
-testPosts = channelNormal.fetchPosts()
+# Posts of the test channel for testing Post (and by extension fetch_posts and parse_post)
+testPosts = channelNormal.fetch_posts()
 
-# Comments of some test posts for testing Comment (and by extension fetchComments and parseComment)
-noComments = testPosts[0].fetchComments()
-oneComment = testPosts[11].fetchComments()
-topComments = testPosts[12].fetchComments()
-chronoComments = testPosts[12].fetchComments(chronological = True)
+# Comments of some test posts for testing Comment (and by extension fetch_comments and parse_comment)
+noComments = testPosts[0].fetch_comments()
+oneComment = testPosts[11].fetch_comments()
+topComments = testPosts[12].fetch_comments()
+chronoComments = testPosts[12].fetch_comments(chronological = True)
 
 # Tests of the Channel class
 class TestChannel(unittest.TestCase):
     # Test Channel.exists() correctly determines if a channel exists
-    def testExists(self):
-        for channelString in validChannelStrings:
-            channel = Channel(channelString)
+    def test_exists(self):
+        for channel_string in valid_channel_strings:
+            channel = Channel(channel_string)
             self.assertTrue(channel.exists())
 
-        for channelString in invalidChannelStrings:
-            channel = Channel(channelString)
+        for channel_string in invalid_channel_strings:
+            channel = Channel(channel_string)
             self.assertFalse(channel.exists())
-    # Test Channel.hasCommunity correctly determines if a channel has a Community page
-    def testHasCommunity(self):
-        self.assertTrue(channelNormal.hasCommunity())
-        self.assertTrue(channelEmpty.hasCommunity())
-        self.assertFalse(channelNoCommunity.hasCommunity())
-        self.assertFalse(channelInvalid.hasCommunity())
-    # Test Channel.channelID returns a channel's correct ID (or None if invalid)
-    def testChannelID(self):
-        self.assertEqual(channelNormal.channelID(), "UCSHozX8N-F7GygP9PIIYxLw")
-        self.assertEqual(channelEmpty.channelID(), "UCv952x-cd5Dg3ZBd9GtMVSw")
-        self.assertEqual(channelNoCommunity.channelID(), "UCfRiDC9KN7TD3JFKKUG5Plg"),
-        self.assertEqual(channelInvalid.channelID(), None)
-    # Test Channel.fetchPosts returns the correct amount of posts
-    def testFetchPosts(self):
-        self.assertEqual(len(channelNormal.fetchPosts()), 17)
-        self.assertEqual(channelEmpty.fetchPosts(), [])
-        self.assertEqual(channelNoCommunity.fetchPosts(), None)
-        self.assertEqual(channelInvalid.fetchPosts(), None)
-    # Test Channel.fetchPosts limit function returns correct amount of posts and the right posts
-    def testFetchPostsLimit(self):
-        limit0 = channelNormal.fetchPosts(limit = 0)
-        limit7 = channelNormal.fetchPosts(limit = 7)
-        limit13 = channelNormal.fetchPosts(limit = 13)
+    # Test Channel.has_community correctly determines if a channel has a Community page
+    def test_has_community(self):
+        self.assertTrue(channelNormal.has_community())
+        self.assertTrue(channelEmpty.has_community())
+        self.assertFalse(channelNoCommunity.has_community())
+        self.assertFalse(channelInvalid.has_community())
+    # Test Channel.channel_id returns a channel's correct ID (or None if invalid)
+    def test_channel_id(self):
+        self.assertEqual(channelNormal.channel_id(), "UCSHozX8N-F7GygP9PIIYxLw")
+        self.assertEqual(channelEmpty.channel_id(), "UCv952x-cd5Dg3ZBd9GtMVSw")
+        self.assertEqual(channelNoCommunity.channel_id(), "UCfRiDC9KN7TD3JFKKUG5Plg"),
+        self.assertEqual(channelInvalid.channel_id(), None)
+    # Test Channel.fetch_posts returns the correct amount of posts
+    def test_fetch_posts(self):
+        self.assertEqual(len(channelNormal.fetch_posts()), 17)
+        self.assertEqual(channelEmpty.fetch_posts(), [])
+        self.assertEqual(channelNoCommunity.fetch_posts(), None)
+        self.assertEqual(channelInvalid.fetch_posts(), None)
+    # Test Channel.fetch_posts limit function returns correct amount of posts and the right posts
+    def test_fetch_posts_limit(self):
+        limit0 = channelNormal.fetch_posts(limit = 0)
+        limit7 = channelNormal.fetch_posts(limit = 7)
+        limit13 = channelNormal.fetch_posts(limit = 13)
         self.assertEqual(limit0, [])
         self.assertEqual(len(limit7), 7)
         self.assertEqual(len(limit13), 13)
         self.assertEqual([o.postID for o in limit7], [o.postID for o in limit13[-7:]])
 
-# Tests of the Post class (and by extension the parsePost function)
+# Tests of the Post class (and by extension the parse_post function)
 class TestPost(unittest.TestCase):
     # Test that text-only posts are parsed correctly
-    def testTextPost(self):
+    def test_text_post(self):
         post = testPosts[0]
         self.assertEqual(post.postID, "UgkxN3xglfBx_R4q55qU_Z1Hzey5Ah9CyTpE")
         self.assertEqual(post.authorID, "UCSHozX8N-F7GygP9PIIYxLw")
         self.assertEqual(post.authorDisplayName, "CommunityDown Test Channel")
         self.assertEqual(post.authorImageURL, "https://yt3.googleusercontent.com/ytc/APkrFKZYhSYg1uorjLPobZEDG0QOajyyEyKkDmprqcLsLalZTKmtVx_xBxZe7faUD1B4=s76-c-k-c0x00ffffff-no-rj-mo")
         self.assertTrue(post.likeCount >= 0)
-        self.assertEqual(post.commentCountText, "0")
+        self.assertEqual(post.comment_countText, "0")
         self.assertFalse(post.edited)
         self.assertTrue(post.timeText.endswith("ago"))
         self.assertEqual(post.contentText, "Test Post Text Only")
         self.assertEqual(post.attachment, None)
     # Test that multi-line posts are parsed correctly
-    def testMultiLineTextPost(self):
+    def test_multi_line_text_post(self):
         post = testPosts[15]
         self.assertEqual(post.postID, "UgkxVWzwSGoR5O_JCxWGeBbIQALIb1grfk4u")
         self.assertEqual(post.contentText, "Test Post Many New\n\nLines\n\n\nSo Many\nNew\n\n\nLines\n\n\nbackslash n go brr\n\n\n\nowo\nuwu\nowo\nuwu")
     # Test that posts with links are parsed correctly
-    def testLinkTextPost(self):
+    def test_link_text_post(self):
         post = testPosts[16]
         self.assertEqual(post.postID, "Ugkx9HySrooC8q8OlaGQnt3tuA1TeGaILbkC")
         self.assertEqual(post.contentText, "Test Post With Link: https://example.com")
     # Test that posts with images are parsed correctly
-    def testTextImagePost(self):
+    def test_text_image_post(self):
         post = testPosts[1]
         self.assertEqual(post.postID, "UgkxDE7a1eW5RZGvEm4jXldpMxHDuM6UpruZ")
         self.assertEqual(post.contentText, "Test Post Text With Image")
         self.assertEqual(post.attachment["type"], "image")
         self.assertEqual(post.attachment["url"], "https://yt3.ggpht.com/LD3QXmo4_3ix3b2axlqfJeUQ1YvOZdeLCkIY646w9xCOj-IR3V2u00xrWTyOEzcv1Z0gBTND0hT8=s512-c-fcrop64=1,00000000ffffffff-nd-v1")
     # Test that posts with multiple images are parsed correctly
-    def testTextMultiImagePost(self):
+    def test_text_multi_image_post(self):
         post = testPosts[2]
         self.assertEqual(post.postID, "UgkxDE0-ktPPh_QNsqC9ZLZgzpbaazujegHF")
         self.assertEqual(post.contentText, "Test Post Text With Multiple Images")
@@ -118,14 +118,14 @@ class TestPost(unittest.TestCase):
         self.assertEqual(post.attachment["urls"][0], "https://yt3.ggpht.com/G5KKGBwa36uhKNKZ3LqzsUJZ7Gi19Msp1E_1lEMk_HC6aY1_5dQoXSIi8HXohuwdsh2PufCnrgl6uQ=s512-c-fcrop64=1,00000000ffffffff-nd-v1")
         self.assertTrue(len(post.attachment["urls"]) == 5)
     # Test that posts with only an image are parsed correctly
-    def testImagePost(self):
+    def test_image_post(self):
         post = testPosts[3]
         self.assertEqual(post.postID, "UgkxE0R5C37qvZ8PC1rcg9WgJiz-XERxgw4V")
         self.assertEqual(post.contentText, None)
         self.assertEqual(post.attachment["type"], "image")
         self.assertEqual(post.attachment["url"], "https://yt3.ggpht.com/w3pdzdEXiiqa4UEdxcon2Jwt1nNHF6eM4Yu8KcvU21_vIkOTS8kGKJJQfwnu4Wy3EUpdGABFo4cR=s512-c-fcrop64=1,00000000ffffffff-nd-v1")
     # Test that posts with only multiple images are parsed correctly
-    def testMultiImagePost(self):
+    def test_multi_image_post(self):
         post = testPosts[4]
         self.assertEqual(post.postID, "UgkxY2O9N8cX9rMNMK50lOK6VXMvw05uyTCa")
         self.assertEqual(post.contentText, None)
@@ -133,14 +133,14 @@ class TestPost(unittest.TestCase):
         self.assertEqual(post.attachment["urls"][0], "https://yt3.ggpht.com/ucbXFS7xEjYaU3qke1Xo7wAx8X6BOJWAidq-zhLO9EjXv19e0lORwFlIbbn3dApzTAlCTtu5kG8pvA=s512-c-fcrop64=1,00000000ffffffff-nd-v1")
         self.assertEqual(len(post.attachment["urls"]), 5)
     # Test that edited posts have the edited attribute
-    def testEditedPost(self):
+    def test_edited_post(self):
         post = testPosts[5]
         self.assertEqual(post.postID, "Ugkxh2DuCHmAmyjdAKVv_dcmrvMj787b2OL1")
         self.assertEqual(post.contentText, "Test Post Edit")
         self.assertTrue(post.edited)
         self.assertTrue(post.timeText.endswith("ago"))
     # Test that posts with polls are parsed correctly
-    def testPoll(self):
+    def test_poll(self):
         post = testPosts[6]
         self.assertEqual(post.postID, "UgkxQ2GoSAnhj3KbrWyvGVLLI16-oEcLJV2k")
         self.assertEqual(post.contentText, "Test Post Text Poll")
@@ -149,7 +149,7 @@ class TestPost(unittest.TestCase):
         self.assertEqual(post.attachment["choices"], ["Choice One", "Choice Two", "Choice Three", "Choice Four"])
         self.assertEqual(post.attachment["imageURLs"], None)
     # Test that posts with image polls are parsed correctly
-    def testImagePoll(self):
+    def test_image_poll(self):
         post = testPosts[9]
         self.assertEqual(post.postID, "UgkxWDZnrAVYI8w0jQOpRyC7XrJa9Ey_k1Wg")
         self.assertEqual(post.contentText, "Image Poll")
@@ -160,7 +160,7 @@ class TestPost(unittest.TestCase):
         self.assertEqual(len(post.attachment["imageURLs"]), 2)
     # Test that posts with embedded videos are parsed correctly
     # TODO: This should be changed to a video on the test channel at some point
-    def testVideoEmbed(self):
+    def test_video_embed(self):
         post = testPosts[8]
         self.assertEqual(post.postID, "Ugkx0mOGgVuFfy8znxJWfIdryu6XL2iQHdOu")
         self.assertEqual(post.contentText, "Video Post")
@@ -175,7 +175,7 @@ class TestPost(unittest.TestCase):
         self.assertTrue(post.attachment["viewCount"] >= 1462235415) # View count as of writing this test
         self.assertTrue(post.attachment["viewCountText"].endswith("views"))
     # Test that posts with quizzes are parsed correctly
-    def testQuiz(self):
+    def test_quiz(self):
         post = testPosts[7]
         self.assertEqual(post.postID, "Ugkxj5sWVNGmEZE73g2zxSea8k89GlceOA1d")
         self.assertEqual(post.contentText, "Test Post Quiz")
@@ -185,27 +185,27 @@ class TestPost(unittest.TestCase):
         self.assertEqual(post.attachment["explanation"], "Explanation For Correct Answer")
         self.assertTrue(post.attachment["answerCountText"].endswith("answered"))
     # Test that the comment count of posts is correct
-    def testCommentCount(self):
+    def test_comment_count(self):
         post = testPosts[12]
         self.assertEqual(post.postID, "UgkximjhpHrqqxHue2IDIpiDRDVK9Q3J8z4c")
         self.assertEqual(post.contentText, "Test Post With Many Comments")
-        self.assertEqual(post.commentCountText, "43")
-        self.assertEqual(post.commentCount, 43)
-        post.fetchComments(limit = 0)
+        self.assertEqual(post.comment_countText, "43")
+        self.assertEqual(post.comment_count, 43)
+        post.fetch_comments(limit = 0)
     # Test that the vote count of posts is correct(ish)
-    def testVoteCount(self):
+    def test_vote_count(self):
         post = testPosts[13]
         self.assertEqual(post.postID, "UgkxXrf-6FdrjY1oY5Og-2V8cm_Hmx1Zb8IS")
         self.assertEqual(post.contentText, "Test Post With Vote")
         self.assertTrue(post.likeCount >= 1)
 
-# Test the Comment class (and by extension the parseComment function)
+# Test the Comment class (and by extension the parse_comment function)
 class TestComment(unittest.TestCase):
     # Test that a post with no comments returns an empty array
-    def testNoComments(self):
+    def test_no_comments(self):
         self.assertEqual(noComments, [])
     # Test that a post with one comment is parsed correctly
-    def testOneComment(self):
+    def test_one_comment(self):
         self.assertTrue(len(oneComment), 1)
         self.assertEqual(oneComment[0].authorID, "UCSHozX8N-F7GygP9PIIYxLw")
         self.assertEqual(oneComment[0].authorDisplayName, "@CommunityDownTest")
@@ -217,7 +217,7 @@ class TestComment(unittest.TestCase):
         self.assertFalse(oneComment[0].edited)
         self.assertEqual(oneComment[0].contentText, "Hurdle Durdle")
     # Test comments from a post with multiple comments are fetched and parsed correctly
-    def testComments(self):
+    def test_comments(self):
         # All the comments was fetched from the post
         self.assertEqual(len(topComments), 35)
         self.assertEqual(len(chronoComments), 35)
@@ -228,13 +228,13 @@ class TestComment(unittest.TestCase):
         self.assertEqual(chronoComments[1].commentID, "UgzbF4D7-o3C9P2izEV4AaABAg")
         self.assertEqual(chronoComments[1].contentText, "Test Test")
     # Edited comment has edited attribute
-    def testEditedComment(self):
+    def test_edited_comment(self):
         self.assertEqual(chronoComments[33].commentID, "UgwWsiDrEvru2rp9M8Z4AaABAg")
         self.assertEqual(chronoComments[33].contentText, "youtube api = stupid and i hate (edited nvm I love youtube api (jk))")
         self.assertEqual(chronoComments[33].replyCount, 4)
         self.assertTrue(chronoComments[33].edited)
     # Complex comment (with emojis, links, and formatting) is parsed correctly
-    def testComplexComment(self):
+    def test_complex_comment(self):
         self.assertEqual(chronoComments[34].commentID, "Ugw6VVsZhhzklrzJdMV4AaABAg")
         self.assertEqual(chronoComments[34].contentText,
     # Explicit 0x20 because trailing space gets removed by editors
@@ -252,11 +252,11 @@ More newlines
 
 
 uwu""")
-    # Test Post.fetchComments limit function returns correct amount of comments and the right comments
-    def testFetchCommentsLimit(self):
-        limit0 = testPosts[12].fetchComments(limit = 0)
-        limit17 = testPosts[12].fetchComments(limit = 17)
-        limit32 = testPosts[12].fetchComments(limit = 32)
+    # Test Post.fetch_comments limit function returns correct amount of comments and the right comments
+    def test_fetch_comments_imit(self):
+        limit0 = testPosts[12].fetch_comments(limit = 0)
+        limit17 = testPosts[12].fetch_comments(limit = 17)
+        limit32 = testPosts[12].fetch_comments(limit = 32)
         self.assertEqual(limit0, [])
         self.assertEqual(len(limit17), 17)
         self.assertEqual(len(limit32), 32)

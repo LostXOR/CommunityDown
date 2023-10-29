@@ -1,6 +1,6 @@
 # Parse the raw post JSON returned by the API into a more friendly format by stripping non-essential data
 # This function contains a lot of long JSON paths but there's really no way around that
-def parsePost(post):
+def parse_post(post):
     # Get the data we really want
     post = post["backstagePostThreadRenderer"]["post"]["backstagePostRenderer"]
     output = {
@@ -11,7 +11,7 @@ def parsePost(post):
         # Post properties
         "postID": post["postId"],
         "likeCount": 0,
-        "commentCountText": "0",
+        "comment_countText": "0",
         "timeText": post["publishedTimeText"]["runs"][0]["text"].removesuffix(" (edited)"),
         "edited": post["publishedTimeText"]["runs"][0]["text"].endswith(" (edited)"),
         # Post contents
@@ -21,10 +21,10 @@ def parsePost(post):
     }
 
     # Like and comment counts
-    likeCountString = post["actionButtons"]["commentActionButtonsRenderer"]["likeButton"]["toggleButtonRenderer"]["accessibilityData"]["accessibilityData"]["label"]
-    output["likeCount"] = int("".join([c for c in likeCountString if c.isdigit()]))
+    like_count_string = post["actionButtons"]["commentActionButtonsRenderer"]["likeButton"]["toggleButtonRenderer"]["accessibilityData"]["accessibilityData"]["label"]
+    output["likeCount"] = int("".join([c for c in like_count_string if c.isdigit()]))
     if "text" in post["actionButtons"]["commentActionButtonsRenderer"]["replyButton"]["buttonRenderer"]:
-        output["commentCountText"] = post["actionButtons"]["commentActionButtonsRenderer"]["replyButton"]["buttonRenderer"]["text"]["simpleText"]
+        output["comment_countText"] = post["actionButtons"]["commentActionButtonsRenderer"]["replyButton"]["buttonRenderer"]["text"]["simpleText"]
 
     # Post text contents
     if "runs" in post["contentText"]:
