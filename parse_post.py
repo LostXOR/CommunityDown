@@ -63,8 +63,10 @@ def parse_post(post):
                 "imageURLs": None
             }
             if "image" in attachment["pollRenderer"]["choices"][0]:
+                # This is a valid operation and doesn't error
+                # pylint: disable-next=unsupported-assignment-operation
                 output["attachment"]["imageURLs"] = [o["image"]["thumbnails"][-1]["url"]
-                    for o in attachment["pollRenderer"]["choices"]] # pylint: disable=E1137
+                    for o in attachment["pollRenderer"]["choices"]]
 
         # Video
         elif "videoRenderer" in attachment:
