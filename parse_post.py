@@ -64,7 +64,7 @@ def parse_post(post):
             }
             if "image" in attachment["pollRenderer"]["choices"][0]:
                 output["attachment"]["imageURLs"] = [o["image"]["thumbnails"][-1]["url"]
-                    for o in attachment["pollRenderer"]["choices"]]
+                    for o in attachment["pollRenderer"]["choices"]] # pylint: disable=E1137
 
         # Video
         elif "videoRenderer" in attachment:

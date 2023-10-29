@@ -32,7 +32,7 @@ class Post:
             ["publishedTimeText"]["runs"][0]["navigationEndpoint"]["browseEndpoint"]["params"]
         request_data = {
             "context": {"client": {"clientName": "WEB", "clientVersion": "2.20231016"}},
-            "browseId": self.__data["authorID"], "params": params
+            "browseId": self.authorID, "params": params # pylint: disable=E1101
         }
         response = requests.post("https://www.youtube.com/youtubei/v1/browse?prettyprint=false",
             headers = {"Content-Type": "application/json"},
