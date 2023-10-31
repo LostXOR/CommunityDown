@@ -1,5 +1,6 @@
 # CommunityDown
 CommunityDown is a downloader for YouTube community pages. It is currently in early development and is only partially functional.
+
 ## Usage
 ```
 usage: main.py [-h] -c CHANNEL [-f {json}] -o OUTPUT [-P POST_LIMIT]
