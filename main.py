@@ -2,8 +2,7 @@
 import sys
 import argparse
 import json
-
-from channel import Channel
+import communitydown
 
 # Create parser for CLI arguments
 parser = argparse.ArgumentParser(
@@ -26,12 +25,12 @@ args = parser.parse_args()
 
 # Get channel
 print("Fetching channel...")
-channel = Channel(args.channel)
+channel = communitydown.fetch_channel(args.channel)
 
-if not channel.exists():
+if channel is None:
     print("Channel does not exist.")
     sys.exit()
-if not channel.has_community():
+if not channel.has_community_tab():
     print("Channel does not have a Community page.")
     sys.exit()
 
@@ -51,7 +50,7 @@ if args.comment_limit != 0:
             limit = args.comment_limit,
             chronological = args.comment_sort == "chronological")
         export.append(post.data())
-        export[0]["comments"] = [c.data() for c in comments]
+        export[-1]["comments"] = [c.data() for c in comments]
         COUNT += 1
         print(f"\r{COUNT}/{len(posts)}", end = "")
     print()
@@ -59,5 +58,5 @@ if args.comment_limit != 0:
 # Write export to file
 print("Saving to file...")
 with open(args.output, "w", encoding = "utf-8") as file:
-    file.write(json.dumps({"posts": export}))
+    file.write(json.dumps({"posts": export}, indent = 4))
 print(f"Export saved to {args.output}.")

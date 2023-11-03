@@ -20,4 +20,4 @@ jobs:
         pip install requests
     - name: Run the unit tests
       run: |
-        python3 unittests.py
+        python3 unit_tests.py

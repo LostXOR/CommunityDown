@@ -2,19 +2,15 @@
 
 import json
 import requests
-from parse_post import parse_post
-from comment import Comment
+from .parse_post_data import parse_post_data
+from .comment import Comment
 
 class Post:
     """Class representing a community post."""
     def __init__(self, data):
         """Parse and store raw post data as attributes of this object."""
         self.__raw_data = data
-        self.__data = parse_post(self.__raw_data)
-        for key, value in self.__data.items():
-            setattr(self, key, value)
-        # Unset until fetch_comments is executed
-        self.comment_count = None
+        self.__data = parse_post_data(self.__raw_data)
 
     def data(self):
         """Return the parsed post data as a dict"""
@@ -28,11 +24,11 @@ class Post:
         """Fetches comments from this community post."""
 
         # Request more post information including continuation token to fetch comments
-        params = self.__raw_data["backstagePostThreadRenderer"]["post"]["backstagePostRenderer"] \
+        params = self.raw_data()["backstagePostThreadRenderer"]["post"]["backstagePostRenderer"] \
             ["publishedTimeText"]["runs"][0]["navigationEndpoint"]["browseEndpoint"]["params"]
         request_data = {
             "context": {"client": {"clientName": "WEB", "clientVersion": "2.20231016"}},
-            "browseId": self.authorID, "params": params # pylint: disable=E1101
+            "browseId": self.data()["authorID"], "params": params
         }
         response = requests.post("https://www.youtube.com/youtubei/v1/browse?prettyprint=false",
             headers = {"Content-Type": "application/json"},
@@ -51,7 +47,7 @@ class Post:
         response_data = response.json()
 
         # Get exact comment count from response
-        self.comment_count = int(response_data["onResponseReceivedEndpoints"][0] \
+        self.__data["commentCount"] = int(response_data["onResponseReceivedEndpoints"][0] \
             ["reloadContinuationItemsCommand"]["continuationItems"][0]["commentsHeaderRenderer"] \
             ["countText"]["runs"][0]["text"].replace(",", ""))
 
