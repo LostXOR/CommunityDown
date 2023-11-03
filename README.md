@@ -28,8 +28,8 @@ options:
 ```
 
 ## TODO
-- Refactor code into a Python module
-- Write better documentation
-- Add ability to fetch comment replies
-- Add HTML option for export format
+- Fix `test_fetch_comments_limit` unit test intermittent failures (rate limits?)
+- Add ability to fetch comment replies, fetch more channel data, fetch individual posts, and fetch individual comments
 - Add more CLI options (exporting individual posts, comments, etc.)
+- Write better documentation
+- Add HTML option for export format
