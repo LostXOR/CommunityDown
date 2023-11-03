@@ -1,6 +1,6 @@
 """Home to parse_post, and nothing else."""
 
-def parse_post(post):
+def parse_post_data(post):
     """Parse the raw post JSON returned by the API into a more friendly format.
     Strips non-essential data and grabs only what we want.
     """
@@ -15,7 +15,8 @@ def parse_post(post):
         # Post properties
         "postID": post["postId"],
         "likeCount": 0,
-        "comment_countText": "0",
+        "commentCount": None,
+        "commentCountText": "0",
         "timeText": post["publishedTimeText"]["runs"][0]["text"].removesuffix(" (edited)"),
         "edited": post["publishedTimeText"]["runs"][0]["text"].endswith(" (edited)"),
         # Post contents
@@ -30,7 +31,7 @@ def parse_post(post):
     output["likeCount"] = int("".join([c for c in like_count_string if c.isdigit()]))
     if "text" in post["actionButtons"]["commentActionButtonsRenderer"] \
         ["replyButton"]["buttonRenderer"]:
-        output["comment_countText"] = post["actionButtons"]["commentActionButtonsRenderer"] \
+        output["commentCountText"] = post["actionButtons"]["commentActionButtonsRenderer"] \
             ["replyButton"]["buttonRenderer"]["text"]["simpleText"]
 
     # Post text contents

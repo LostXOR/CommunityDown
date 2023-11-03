@@ -1,6 +1,6 @@
 """You guessed it, the parse_comment function is here."""
 
-def parse_comment(comment):
+def parse_comment_data(comment):
     """Parse the JSON data of comments returned by the API into something comprehensible."""
     # Get the comment data we actually want
     comment = comment["commentThreadRenderer"]["comment"]["commentRenderer"]

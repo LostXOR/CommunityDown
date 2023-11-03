@@ -1,46 +1,23 @@
-"""The home of the Channel class."""
-
-import re
 import json
 import requests
-from post import Post
+import communitydown
 
 class Channel:
     """Class representing a YouTube channel."""
 
-    def __init__(self, channel):
-        """Parse the channel string provided and check if the channel exists."""
-        # Attempt to get channel page
-        if channel.startswith("@"):
-            response = requests.get("https://youtube.com/" + channel, timeout = 5)
-        elif channel.startswith("https://"):
-            response = requests.get(channel, timeout = 5)
-        elif "youtube.com" in channel:
-            response = requests.get("https://" + channel, timeout = 5)
-        else:
-            response = requests.get("https://youtube.com/channel/" + channel, timeout = 5)
+    def __init__(self, data):
+        self.__data = data
 
-        # Check whether channel exists and has a Community tab
-        self.__channel_exists = False
-        self.__has_community = False
-        self.__channel_id = None
-        if 'href="https://www.youtube.com/channel/' in response.text:
-            self.__channel_exists = True
-            self.__channel_id = re.findall(r'(?<=/channel\/).*?(?=")', response.text)[0]
-        if '"title":"Community"' in response.text:
-            self.__has_community = True
-
-    def exists(self):
-        """Return whether the channel exists."""
-        return self.__channel_exists
-
-    def has_community(self):
+    def has_community_tab(self):
         """Return whether the channel has a community tab."""
-        return self.__has_community
+        return self.__data["hasCommunityTab"]
 
     def channel_id(self):
         """Return the channel's ID."""
-        return self.__channel_id
+        return self.__data["channelID"]
+
+    def data(self):
+        return self.__data
 
     def fetch_posts(self, limit = -1):
         """Fetch community posts for the channel up to limit."""
@@ -48,10 +25,10 @@ class Channel:
         # params is a magic string that's used to get the community tab, no idea what it's for
         next_request_data = {
             "context": {"client": {"clientName": "WEB", "clientVersion": "2.20231016"}},
-            "browseId": self.__channel_id, "params": "Egljb21tdW5pdHnyBgQKAkoA"
+            "browseId": self.channel_id(), "params": "Egljb21tdW5pdHnyBgQKAkoA"
         }
         # Channel doesn't exist or doesn't have a community page
-        if not self.has_community() or not self.exists():
+        if not self.has_community_tab():
             return None
 
         # Request posts until limit is hit or all posts have been requested
@@ -97,4 +74,4 @@ class Channel:
         if limit != -1 and len(posts) > limit:
             posts = posts[:limit]
         posts.reverse()
-        return [Post(post) for post in posts]
+        return [communitydown.Post(data) for data in posts]
