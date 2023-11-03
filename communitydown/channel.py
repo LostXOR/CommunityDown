@@ -1,6 +1,8 @@
+"""Channel class, yay!"""
+
 import json
 import requests
-import communitydown
+from .post import Post
 
 class Channel:
     """Class representing a YouTube channel."""
@@ -17,6 +19,7 @@ class Channel:
         return self.__data["channelID"]
 
     def data(self):
+        """Return the channel's data."""
         return self.__data
 
     def fetch_posts(self, limit = -1):
@@ -74,4 +77,4 @@ class Channel:
         if limit != -1 and len(posts) > limit:
             posts = posts[:limit]
         posts.reverse()
-        return [communitydown.Post(data) for data in posts]
+        return [Post(data) for data in posts]

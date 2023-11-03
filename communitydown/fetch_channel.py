@@ -1,8 +1,8 @@
-import requests
+"""Yet another useless(ish) docstring. This is the fetch_channel function ofc."""
 import re
-import communitydown
+import requests
+from .channel import Channel
 
-"""fetch_channel"""
 def fetch_channel(channel):
     """Fetch a channel's information given its ID."""
 
@@ -16,12 +16,13 @@ def fetch_channel(channel):
     else:
         response = requests.get("https://youtube.com/channel/" + channel, timeout = 5)
 
-    matches = re.findall(r'(?<=content="https:\/\/www\.youtube\.com\/channel\/).*?(?="|\?)', response.text)
+    matches = re.findall(r'(?<=content="https:\/\/www\.youtube\.com\/channel\/).*?(?="|\?)',
+        response.text)
 
     if len(matches) == 0:
         return None
-    else:
-        return communitydown.Channel({
-            "channelID": matches[0],
-            "hasCommunityTab": '"title":"Community"' in response.text
-        })
+
+    return Channel({
+        "channelID": matches[0],
+        "hasCommunityTab": '"title":"Community"' in response.text
+    })

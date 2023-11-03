@@ -3,24 +3,25 @@
 import unittest
 import communitydown
 
-# Test channels
+# Prepare test data structures
+# Channels
 normal_channel = communitydown.fetch_channel("UCSHozX8N-F7GygP9PIIYxLw")
 empty_channel = communitydown.fetch_channel("UCv952x-cd5Dg3ZBd9GtMVSw")
 no_community_channel = communitydown.fetch_channel("UCfRiDC9KN7TD3JFKKUG5Plg")
 invalid_channel = communitydown.fetch_channel("UCfRiDC9KN7TD3JFKKUG5Qmh")
-
-# Test posts
+# Posts
 test_posts = normal_channel.fetch_posts()
-
-# Test comments
+# Comments
 no_comments = test_posts[0].fetch_comments()
 one_comment = test_posts[11].fetch_comments()
 top_comments = test_posts[12].fetch_comments()
 chrono_comments = test_posts[12].fetch_comments(chronological = True)
 
 class TestFetchChannel(unittest.TestCase):
+    """Test communitydown.fetch_channel."""
 
     def test_channel_finding(self):
+        """Test that valid and invalid channels are correctly identified."""
         # Various formats of channel name/ID to test channel finding
         valid_channel_strings = [
             "@CommunityDownTestChannel",
@@ -48,15 +49,6 @@ class TestFetchChannel(unittest.TestCase):
         for channel_string in invalid_channel_strings:
             self.assertTrue(communitydown.fetch_channel(channel_string) is None)
 
-    def test_channel_data(self):
-        self.assertFalse(normal_channel is None)
-        self.assertFalse(empty_channel is None)
-        self.assertFalse(no_community_channel is None)
-        self.assertTrue(invalid_channel is None)
-        self.assertTrue(normal_channel.has_community_tab())
-        self.assertTrue(empty_channel.has_community_tab())
-        self.assertFalse(no_community_channel.has_community_tab())
-
 #class TestFetchPost(unittest.TestCase):
 #    pass
 
@@ -64,21 +56,26 @@ class TestFetchChannel(unittest.TestCase):
 #    pass
 
 class TestChannel(unittest.TestCase):
+    """Test that fetched channels have the correct ID and community tab flag."""
 
     def test_normal_channel(self):
+        """Test normal channel data."""
         self.assertEqual(normal_channel.channel_id(), "UCSHozX8N-F7GygP9PIIYxLw")
         self.assertTrue(normal_channel.has_community_tab())
 
     def test_empty_channel(self):
+        """Test empty channel data."""
         self.assertEqual(empty_channel.channel_id(), "UCv952x-cd5Dg3ZBd9GtMVSw")
         self.assertTrue(empty_channel.has_community_tab())
 
     def test_no_community_channel(self):
+        """Test channel with no community tab."""
         self.assertEqual(no_community_channel.channel_id(), "UCfRiDC9KN7TD3JFKKUG5Plg")
         self.assertFalse(no_community_channel.has_community_tab())
 
 
 class TestPost(unittest.TestCase):
+    """Test various types of Post objects have the correct data."""
 
     def test_text_post(self):
         """Test that text-only posts are parsed correctly."""
@@ -206,7 +203,7 @@ uwu""")
         self.assertEqual(data["attachment"]["authorDisplayName"], "Rick Astley")
         self.assertTrue(data["attachment"]["timeText"].endswith("years ago"))
         self.assertEqual(data["attachment"]["lengthText"], "3:33")
-        self.assertTrue(data["attachment"]["viewCount"] >= 1462235415) # View count as of writing this
+        self.assertTrue(data["attachment"]["viewCount"] >= 1462235415) # View count as of writing
         self.assertTrue(data["attachment"]["viewCountText"].endswith("views"))
 
     def test_quiz(self):
@@ -215,7 +212,8 @@ uwu""")
         self.assertEqual(data["postID"], "Ugkxj5sWVNGmEZE73g2zxSea8k89GlceOA1d")
         self.assertEqual(data["contentText"], "Test Post Quiz")
         self.assertEqual(data["attachment"]["type"], "quiz")
-        self.assertEqual(data["attachment"]["choices"], ["Answer 1", "Answer 2", "Answer 3 (Correct)"])
+        self.assertEqual(data["attachment"]["choices"],
+            ["Answer 1", "Answer 2", "Answer 3 (Correct)"])
         self.assertEqual(data["attachment"]["correctChoice"], 2)
         self.assertEqual(data["attachment"]["explanation"], "Explanation For Correct Answer")
         self.assertTrue(data["attachment"]["answerCountText"].endswith("answered"))
@@ -236,7 +234,7 @@ uwu""")
         self.assertTrue(data["likeCount"] >= 1)
 
 class TestComment(unittest.TestCase):
-    """Test the Comment class (and by extension the parse_comment function)."""
+    """Test various Comment objects have the correct data."""
 
     def test_no_comments(self):
         """Test that a post with no comments returns an empty array."""

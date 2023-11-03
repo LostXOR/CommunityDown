@@ -50,7 +50,7 @@ if args.comment_limit != 0:
             limit = args.comment_limit,
             chronological = args.comment_sort == "chronological")
         export.append(post.data())
-        export[0]["comments"] = [c.data() for c in comments]
+        export[-1]["comments"] = [c.data() for c in comments]
         COUNT += 1
         print(f"\r{COUNT}/{len(posts)}", end = "")
     print()

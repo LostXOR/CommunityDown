@@ -1,3 +1,5 @@
+"""Init function to import all the different classes and functions."""
+
 from .fetch_channel import fetch_channel
 #from .fetch_post import fetch_post
 #from .fetch_comment import fetch_comment

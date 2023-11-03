@@ -2,14 +2,15 @@
 
 import json
 import requests
-import communitydown
+from .parse_post_data import parse_post_data
+from .comment import Comment
 
 class Post:
     """Class representing a community post."""
     def __init__(self, data):
         """Parse and store raw post data as attributes of this object."""
         self.__raw_data = data
-        self.__data = communitydown.parse_post_data(self.__raw_data)
+        self.__data = parse_post_data(self.__raw_data)
 
     def data(self):
         """Return the parsed post data as a dict"""
@@ -91,4 +92,4 @@ class Post:
         if limit != -1 and len(comments_data) > limit:
             comments_data = comments_data[:limit]
         comments_data.reverse()
-        return [communitydown.Comment(data) for data in comments_data]
+        return [Comment(data) for data in comments_data]
